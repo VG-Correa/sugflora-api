@@ -12,7 +12,7 @@ import lombok.Data;
 
 @Entity
 @Data
-public class Usuario extends UuidDomain implements DTOConvertable {
+public class Usuario extends UuidDomain implements DTOConvertable<UsuarioDTO> {
     
     @Column(nullable = false, unique = false)
     private String nome;
@@ -38,7 +38,7 @@ public class Usuario extends UuidDomain implements DTOConvertable {
     public Usuario(){
     }
 
-    public Usuario(DTO dto) {
+    public Usuario(UsuarioDTO dto) {
         this.InitByDTO(dto);
     }
 
@@ -53,21 +53,14 @@ public class Usuario extends UuidDomain implements DTOConvertable {
     }
 
     @Override
-    public boolean InitByDTO(DTO dto) {
-
-        if (dto instanceof UsuarioDTO) {
-            UsuarioDTO usuarioDTO = (UsuarioDTO) dto;
-            this.nome = usuarioDTO.getNome();
-            this.cpf = usuarioDTO.getCpf();
-            this.rg = usuarioDTO.getRg();
-            this.email = usuarioDTO.getEmail();
-            this.endereco = usuarioDTO.getEndereco();
-            CriptografarSenha(usuarioDTO.getSenha());
-            copyDomainDTO(usuarioDTO);
-            return true;
-        }
-
-        return false;
+    public void InitByDTO(UsuarioDTO dto) {
+        this.nome = dto.getNome();
+        this.cpf = dto.getCpf();
+        this.rg = dto.getRg();
+        this.email = dto.getEmail();
+        this.endereco = dto.getEndereco();
+        CriptografarSenha(dto.getSenha());
+        copyDomainDTO(dto);
     }
 
 }

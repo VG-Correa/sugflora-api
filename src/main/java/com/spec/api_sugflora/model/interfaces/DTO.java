@@ -1,6 +1,10 @@
 package com.spec.api_sugflora.model.interfaces;
 
-public interface DTO {
-    DTOConvertable toModel();
-    boolean initByModel(DTOConvertable model);
+import java.lang.reflect.Field;
+
+public interface DTO<T> {
+    T toModel();
+    void initByModel(T model);
+
+    
 }

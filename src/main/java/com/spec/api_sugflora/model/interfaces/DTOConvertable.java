@@ -1,6 +1,7 @@
 package com.spec.api_sugflora.model.interfaces;
 
-public interface DTOConvertable {
-    DTO toDTO();
-    boolean InitByDTO(DTO dto);
+
+public interface DTOConvertable<T> {
+    T toDTO();
+    void InitByDTO(T dto);
 }

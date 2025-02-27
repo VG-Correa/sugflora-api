@@ -8,7 +8,7 @@ import jakarta.persistence.Column;
 import lombok.Data;
 
 @Data
-public class UsuarioDTO extends UuidDomainDTO implements DTO{
+public class UsuarioDTO extends UuidDomainDTO implements DTO<Usuario>{
     private String nome;
     private String sobrenome;
     private String email;
@@ -19,7 +19,7 @@ public class UsuarioDTO extends UuidDomainDTO implements DTO{
 
     UsuarioDTO(){}
 
-    public UsuarioDTO(DTOConvertable model) {
+    public UsuarioDTO(Usuario model) {
         this.initByModel(model);
     }
 
@@ -29,19 +29,12 @@ public class UsuarioDTO extends UuidDomainDTO implements DTO{
     }
 
     @Override
-    public boolean initByModel(DTOConvertable model) {
-        if (model instanceof Usuario) {
-            Usuario usuario = (Usuario) model;
-            this.nome = usuario.getNome();
-            this.cpf = usuario.getCpf();
-            this.rg = usuario.getRg();
-            this.email = usuario.getEmail();
-            this.endereco = usuario.getEndereco();
-            this.senha = usuario.getSenha();
-            // TODO: Parei aqui
-            return true;
-        }
-
-        return false;
+    public void initByModel(Usuario model) {
+            this.nome = model.getNome();
+            this.cpf = model.getCpf();
+            this.rg = model.getRg();
+            this.email = model.getEmail();
+            this.endereco = model.getEndereco();
+            this.senha = model.getSenha();
     }
 }
