@@ -5,17 +5,26 @@ import java.lang.reflect.Field;
 import org.springframework.stereotype.Service;
 import org.springframework.ui.Model;
 
+import com.spec.api_sugflora.model.interfaces.DTO;
+import com.spec.api_sugflora.model.interfaces.DTOConvertable;
+
 @Service
 public class Mapper {
 
-    public static <T, D> D mapToDTO(T model, Class<D> dtoClass) {
+    public static Object mapToDTO(DTOConvertable model, Class<DTO> dtoClass) {
         
         try {
-            D dto = dtoClass.getDeclaredConstructor().newInstance();
 
             for (Field field : model.getClass().getDeclaredFields()) {
                 field.setAccessible(true);
+                Object value = field.get(model);
+
+                if (value != null && DTOConvertable.class.isAssignableFrom(value.getClass())) {
+                    
+                } 
+                
                 Field dtoField = dtoClass.getDeclaredField(field.getName());
+
 
 
 

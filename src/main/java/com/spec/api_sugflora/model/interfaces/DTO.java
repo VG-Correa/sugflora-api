@@ -7,4 +7,5 @@ public interface DTO<T> {
     void initByModel(T model);
 
     
+    
 }
