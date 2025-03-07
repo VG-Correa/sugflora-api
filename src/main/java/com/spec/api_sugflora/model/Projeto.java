@@ -24,13 +24,14 @@ public class Projeto extends IntDomain implements DTOConvertable<ProjetoDTO> {
     }
 
     @Override
-    public ProjetoDTO toDTO() {
-        return new ProjetoDTO(this);
+    public Class<ProjetoDTO> getDTOClass() {
+       return ProjetoDTO.class;
     }
 
     @Override
     public void InitByDTO(ProjetoDTO dto) {
-        
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'InitByDTO'");
     }
     
 

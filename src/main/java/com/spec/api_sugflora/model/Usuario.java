@@ -48,11 +48,6 @@ public class Usuario extends UuidDomain implements DTOConvertable<UsuarioDTO> {
     }
 
     @Override
-    public UsuarioDTO toDTO() {
-        return new UsuarioDTO(this);
-    }
-
-    @Override
     public void InitByDTO(UsuarioDTO dto) {
         this.nome = dto.getNome();
         this.cpf = dto.getCpf();
@@ -61,6 +56,11 @@ public class Usuario extends UuidDomain implements DTOConvertable<UsuarioDTO> {
         this.endereco = dto.getEndereco();
         CriptografarSenha(dto.getSenha());
         copyDomainDTO(dto);
+    }
+
+    @Override
+    public Class<UsuarioDTO> getDTOClass() {
+        return UsuarioDTO.class;
     }
 
 }

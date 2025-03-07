@@ -37,4 +37,9 @@ public class UsuarioDTO extends UuidDomainDTO implements DTO<Usuario>{
             this.endereco = model.getEndereco();
             this.senha = model.getSenha();
     }
+
+    @Override
+    public Class<Usuario> getModelClass() {
+        return Usuario.class;
+    }
 }

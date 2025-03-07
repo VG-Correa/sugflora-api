@@ -19,13 +19,13 @@ public class ProjetoDTO extends IntDomainDTO implements DTO<Projeto> {
     }
 
     @Override
-    public Projeto toModel() {
-        return new Projeto(this);
-    }
-
-    @Override
     public void initByModel(Projeto model) {
         // TODO Auto-generated method stub
         throw new UnsupportedOperationException("Unimplemented method 'initByModel'");
+    }
+
+    @Override
+    public Class<Projeto> getModelClass() {
+            return Projeto.class;
     }
 }
