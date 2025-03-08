@@ -2,12 +2,44 @@ package com.spec.api_sugflora.model.interfaces;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
-import java.lang.reflect.Modifier;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 public interface DTOConvertable<T> {
-    void InitByDTO(T dto);
 
+    @JsonIgnore
     Class<T> getDTOClass();
+
+    default void initBy(T classe) {
+
+        Field[] fields = classe.getClass().getDeclaredFields();
+
+        for (Field field : fields) {
+            field.setAccessible(true);
+            String fieldName = field.getName();
+
+            try {
+                Field targetField = findField(getClass(), fieldName);
+                targetField.setAccessible(true);
+
+                if (targetField.getType().isAssignableFrom(field.getType())) {
+                    Object value = field.get(classe);
+                    targetField.set(this, value);
+                }
+                
+            } catch (NoSuchFieldException e) {
+                // pass
+            } catch (IllegalArgumentException e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            } catch (IllegalAccessException e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            }
+
+        }
+
+    }
 
     default T toDTO() {
         try {
@@ -16,17 +48,6 @@ public interface DTOConvertable<T> {
             constructor.setAccessible(true);
             T dto = constructor.newInstance();
             mapPropertiesUsingReflection(this, dto);
-            
-            try {
-                Field fieldClassModel = dtoClass.getDeclaredField("modelClass");    
-                fieldClassModel.setAccessible(true);
-                fieldClassModel.set(dto, null);
-                System.err.println("localizou modelClass");
-            } catch (Exception e) {
-                System.err.println("Não localizou modelClass");
-                // Não faz nada
-
-            }
 
             return dto;
         } catch (Exception e) {
@@ -39,19 +60,9 @@ public interface DTOConvertable<T> {
     default T toDTO(Class<T> dtoClass) {
         try {
             Constructor<T> constructor = dtoClass.getDeclaredConstructor();
-            constructor.setAccessible(true); 
+            constructor.setAccessible(true);
             T dto = constructor.newInstance();
             mapPropertiesUsingReflection(this, dto);
-
-            try {
-                Field fieldClassModel = dtoClass.getDeclaredField("modelClass");
-                fieldClassModel.setAccessible(true);
-                fieldClassModel.set(dto, null);
-                System.err.println("localizou modelClass");
-            } catch (Exception e) {
-                System.err.println("Não localizou modelClass");
-                // Não faz nada
-            }
 
             return dto;
         } catch (Exception e) {
@@ -60,11 +71,11 @@ public interface DTOConvertable<T> {
             return null;
         }
     }
-    
+
     default void mapPropertiesUsingReflection(Object source, T target) throws Exception {
         // Mapeia campos da classe atual
         mapFieldsFromClass(source, target, source.getClass());
-        
+
         // Mapeia também campos das superclasses
         Class<?> superClass = source.getClass().getSuperclass();
         while (superClass != null && superClass != Object.class) {
@@ -72,39 +83,31 @@ public interface DTOConvertable<T> {
             superClass = superClass.getSuperclass();
         }
     }
-    
+
     default void mapFieldsFromClass(Object source, T target, Class<?> sourceClass) throws Exception {
         Field[] sourceFields = sourceClass.getDeclaredFields();
-        
+
         for (Field sourceField : sourceFields) {
             try {
-                // Ignorar campos estáticos, finais ou com nome "modelClass"
-                if (Modifier.isStatic(sourceField.getModifiers()) || 
-                    Modifier.isFinal(sourceField.getModifiers()) ||
-                    sourceField.getName().equals("modelClass")) {
-                    continue;
-                }
-                
                 // Torna o campo fonte acessível
                 sourceField.setAccessible(true);
                 String fieldName = sourceField.getName();
-                
+
                 try {
-                    // Tenta encontrar campo correspondente no target
-                    Field targetField = findField(target.getClass(), fieldName);
-                    
-                    // Ignora se o campo se chamar "modelClass"
-                    if (targetField.getName().equals("modelClass")) {
-                        continue;
-                    }
-                    
-                    // Torna o campo alvo acessível
-                    targetField.setAccessible(true);
-                    
-                    // Verifica compatibilidade de tipos
-                    if (targetField.getType().isAssignableFrom(sourceField.getType())) {
-                        Object value = sourceField.get(source);
-                        targetField.set(target, value);
+
+                    if (!fieldName.equals("modelClass")) {
+
+                        // Tenta encontrar campo correspondente no target
+                        Field targetField = findField(target.getClass(), fieldName);
+
+                        // Torna o campo alvo acessível
+                        targetField.setAccessible(true);
+
+                        // Verifica compatibilidade de tipos
+                        if (targetField.getType().isAssignableFrom(sourceField.getType())) {
+                            Object value = sourceField.get(source);
+                            targetField.set(target, value);
+                        }
                     }
                 } catch (NoSuchFieldException e) {
                     // Campo não existe no DTO, ignora silenciosamente
@@ -116,13 +119,13 @@ public interface DTOConvertable<T> {
             }
         }
     }
-    
+
     default Field findField(Class<?> clazz, String fieldName) throws NoSuchFieldException {
         // Ignorar busca pelo campo "modelClass"
         if (fieldName.equals("modelClass")) {
             throw new NoSuchFieldException("Campo 'modelClass' ignorado propositalmente");
         }
-        
+
         try {
             Field field = clazz.getDeclaredField(fieldName);
             field.setAccessible(true);
@@ -136,5 +139,5 @@ public interface DTOConvertable<T> {
             throw e;
         }
     }
-    
+
 }

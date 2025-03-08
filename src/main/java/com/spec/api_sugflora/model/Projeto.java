@@ -1,5 +1,6 @@
 package com.spec.api_sugflora.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.spec.api_sugflora.dto.ProjetoDTO;
 import com.spec.api_sugflora.model.interfaces.DTO;
 import com.spec.api_sugflora.model.interfaces.DTOConvertable;
@@ -20,18 +21,13 @@ public class Projeto extends IntDomain implements DTOConvertable<ProjetoDTO> {
     public Projeto(){}
 
     public Projeto(ProjetoDTO dto) {
-        this.InitByDTO(dto);
+        this.initBy(dto);
     }
 
     @Override
+    @JsonIgnore 
     public Class<ProjetoDTO> getDTOClass() {
        return ProjetoDTO.class;
-    }
-
-    @Override
-    public void InitByDTO(ProjetoDTO dto) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'InitByDTO'");
     }
     
 

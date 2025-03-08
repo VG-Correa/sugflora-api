@@ -2,6 +2,7 @@ package com.spec.api_sugflora.model;
 
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.spec.api_sugflora.dto.UsuarioDTO;
 import com.spec.api_sugflora.model.interfaces.DTO;
 import com.spec.api_sugflora.model.interfaces.DTOConvertable;
@@ -14,6 +15,9 @@ import lombok.Data;
 @Data
 public class Usuario extends UuidDomain implements DTOConvertable<UsuarioDTO> {
     
+    @Column(nullable = false, unique = true)
+    private String username;
+
     @Column(nullable = false, unique = false)
     private String nome;
 
@@ -35,11 +39,14 @@ public class Usuario extends UuidDomain implements DTOConvertable<UsuarioDTO> {
     @Column(nullable = true, unique = false)
     private String endereco;
 
+    @Column(nullable = false, unique = false)
+    private String role;
+
     public Usuario(){
     }
 
     public Usuario(UsuarioDTO dto) {
-        this.InitByDTO(dto);
+        this.initBy(dto);
     }
 
     public void CriptografarSenha(String senha) {
@@ -48,17 +55,7 @@ public class Usuario extends UuidDomain implements DTOConvertable<UsuarioDTO> {
     }
 
     @Override
-    public void InitByDTO(UsuarioDTO dto) {
-        this.nome = dto.getNome();
-        this.cpf = dto.getCpf();
-        this.rg = dto.getRg();
-        this.email = dto.getEmail();
-        this.endereco = dto.getEndereco();
-        CriptografarSenha(dto.getSenha());
-        copyDomainDTO(dto);
-    }
-
-    @Override
+    @JsonIgnore
     public Class<UsuarioDTO> getDTOClass() {
         return UsuarioDTO.class;
     }

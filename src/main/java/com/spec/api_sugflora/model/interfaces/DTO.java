@@ -3,26 +3,51 @@ package com.spec.api_sugflora.model.interfaces;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 
-public interface DTO<T> {
-    void initByModel(T model);
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
+public interface DTO<T> {
+
+    @JsonIgnore
     Class<T> getModelClass();
+
+    default void initBy(T classe) {
+
+        Field[] fields = classe.getClass().getDeclaredFields();
+
+        for (Field field : fields) {
+            field.setAccessible(true);
+            String fieldName = field.getName();
+
+            try {
+                Field targetField = findField(getClass(), fieldName);
+                targetField.setAccessible(true);
+
+                if (targetField.getType().isAssignableFrom(field.getType())) {
+                    Object value = field.get(classe);
+                    targetField.set(this, value);
+                }
+                
+            } catch (NoSuchFieldException e) {
+                // pass
+            } catch (IllegalArgumentException e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            } catch (IllegalAccessException e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            }
+
+        }
+
+    }
 
     default T toModel() {
         try {
-            Class<T> modelClass = getModelClass();
-            Constructor<T> constructor = modelClass.getDeclaredConstructor();
+            Class<T> modelo = getModelClass();
+            Constructor<T> constructor = modelo.getDeclaredConstructor();
             constructor.setAccessible(true);
-            T model = constructor.newInstance();            
+            T model = constructor.newInstance();
             mapPropertiesUsingReflection(this, model);
-            
-            try {
-                Field fieldClassModel = modelClass.getDeclaredField("modelClass");
-                fieldClassModel.setAccessible(true);
-                fieldClassModel.set(model, null);
-            } catch (Exception e) {
-                // Não faz nada
-            }
 
             return model;
         } catch (Exception e) {
@@ -36,16 +61,8 @@ public interface DTO<T> {
         try {
             Constructor<T> constructor = modelClass.getDeclaredConstructor();
             constructor.setAccessible(true);
-            T model = constructor.newInstance();            
+            T model = constructor.newInstance();
             mapPropertiesUsingReflection(this, model);
-
-            try {
-                Field fieldClassModel = modelClass.getDeclaredField("modelClass");
-                fieldClassModel.setAccessible(true);
-                fieldClassModel.set(model, null);
-            } catch (Exception e) {
-                // Não faz nada
-            }
 
             return model;
         } catch (Exception e) {
@@ -58,7 +75,7 @@ public interface DTO<T> {
     default void mapPropertiesUsingReflection(Object source, T target) throws Exception {
         // Mapeia campos da classe atual
         mapFieldsFromClass(source, target, source.getClass());
-        
+
         // Mapeia também campos das superclasses
         Class<?> superClass = source.getClass().getSuperclass();
         while (superClass != null && superClass != Object.class) {
@@ -66,25 +83,25 @@ public interface DTO<T> {
             superClass = superClass.getSuperclass();
         }
     }
-    
+
     default void mapFieldsFromClass(Object source, T target, Class<?> sourceClass) throws Exception {
         Field[] sourceFields = sourceClass.getDeclaredFields();
-        
+
         for (Field sourceField : sourceFields) {
             try {
                 // Torna o campo fonte acessível
                 sourceField.setAccessible(true);
                 String fieldName = sourceField.getName();
-                
+
                 try {
                     if (!fieldName.equals("modelClass")) {
-                    
+
                         // Tenta encontrar campo correspondente no target
                         Field targetField = findField(target.getClass(), fieldName);
-                        
+
                         // Torna o campo alvo acessível
                         targetField.setAccessible(true);
-                        
+
                         // Verifica compatibilidade de tipos
                         if (targetField.getType().isAssignableFrom(sourceField.getType())) {
                             Object value = sourceField.get(source);
@@ -101,7 +118,7 @@ public interface DTO<T> {
             }
         }
     }
-    
+
     default Field findField(Class<?> clazz, String fieldName) throws NoSuchFieldException {
         try {
             Field field = clazz.getDeclaredField(fieldName);
@@ -116,6 +133,5 @@ public interface DTO<T> {
             throw e;
         }
     }
-    
-    
+
 }

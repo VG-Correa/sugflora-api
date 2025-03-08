@@ -5,6 +5,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.spec.api_sugflora.dto.UsuarioDTO;
 import com.spec.api_sugflora.model.Usuario;
 
 @RestController
@@ -12,10 +13,15 @@ import com.spec.api_sugflora.model.Usuario;
 public class testesController {
 
     @GetMapping("")
-    public ResponseEntity<Object> getTeste(){
+    public ResponseEntity<UsuarioDTO> getTeste(){
         Usuario user = new Usuario();
+        user.setUsername("VG-Correa");
         user.setNome("Victor");
         user.setEmail("v.teste@teste.com");
+
+        UsuarioDTO userDTO = new UsuarioDTO(user);
+
+        System.err.println(userDTO);
 
         return ResponseEntity.ok().body(user.toDTO());
     }

@@ -15,13 +15,7 @@ public class ProjetoDTO extends IntDomainDTO implements DTO<Projeto> {
     private Usuario dono;
 
     public ProjetoDTO(Projeto projeto) {
-        this.initByModel(projeto);
-    }
-
-    @Override
-    public void initByModel(Projeto model) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'initByModel'");
+        this.initBy(projeto);
     }
 
     @Override
