@@ -20,7 +20,7 @@ public abstract class UuidDomain {
     private UUID id;
 
     @Column(nullable = false, unique = false)
-    private LocalDateTime createdAt;
+    private LocalDateTime createdAt = LocalDateTime.now();
 
     @Column(nullable = true, unique = false)
     private Integer createdById;
@@ -32,7 +32,7 @@ public abstract class UuidDomain {
     private LocalDateTime deletedAt;
 
     @Column(nullable = true, unique = false)
-    private LocalDateTime updatedAt;
+    private LocalDateTime updatedAt = LocalDateTime.now();
 
     @Column(nullable = true, unique = false)
     private Integer updatedById;

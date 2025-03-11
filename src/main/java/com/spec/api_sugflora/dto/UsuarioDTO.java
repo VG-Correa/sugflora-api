@@ -25,11 +25,6 @@ public class UsuarioDTO extends UuidDomainDTO implements DTO<Usuario>{
         this.initBy(model);
     }
 
-    @Override
-    public Usuario toModel() {
-        return new Usuario(this);
-    }
-
     public  Class<Usuario> getModelClass() {
         return Usuario.class;
     }

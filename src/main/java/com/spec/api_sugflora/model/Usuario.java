@@ -1,9 +1,15 @@
 package com.spec.api_sugflora.model;
 
+import java.util.Collection;
+import java.util.List;
+
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.spec.api_sugflora.dto.UsuarioDTO;
+import com.spec.api_sugflora.dto.UsuarioWriteDTO;
 import com.spec.api_sugflora.model.interfaces.DTO;
 import com.spec.api_sugflora.model.interfaces.DTOConvertable;
 
@@ -13,7 +19,7 @@ import lombok.Data;
 
 @Entity
 @Data
-public class Usuario extends UuidDomain implements DTOConvertable<UsuarioDTO> {
+public class Usuario extends UuidDomain implements DTOConvertable<UsuarioWriteDTO, UsuarioDTO>, UserDetails {
     
     @Column(nullable = false, unique = true)
     private String username;
@@ -45,7 +51,7 @@ public class Usuario extends UuidDomain implements DTOConvertable<UsuarioDTO> {
     public Usuario(){
     }
 
-    public Usuario(UsuarioDTO dto) {
+    public Usuario(UsuarioWriteDTO dto) {
         this.initBy(dto);
     }
 
@@ -58,6 +64,40 @@ public class Usuario extends UuidDomain implements DTOConvertable<UsuarioDTO> {
     @JsonIgnore
     public Class<UsuarioDTO> getDTOClass() {
         return UsuarioDTO.class;
+    }
+
+    @Override
+    public Collection<? extends GrantedAuthority> getAuthorities() {
+        return List.of(() -> role);
+    }
+
+    @Override
+    public String getPassword() {
+        return senha;
+    }
+
+    @Override
+    public boolean isAccountNonExpired() {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'isAccountNonExpired'");
+    }
+
+    @Override
+    public boolean isAccountNonLocked() {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'isAccountNonLocked'");
+    }
+
+    @Override
+    public boolean isCredentialsNonExpired() {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'isCredentialsNonExpired'");
+    }
+
+    @Override
+    public boolean isEnabled() {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'isEnabled'");
     }
 
 }

@@ -2,12 +2,13 @@ package com.spec.api_sugflora.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.spec.api_sugflora.dto.ProjetoDTO;
+import com.spec.api_sugflora.dto.ProjetoWriteDTO;
 import com.spec.api_sugflora.model.interfaces.DTO;
 import com.spec.api_sugflora.model.interfaces.DTOConvertable;
 
 import jakarta.persistence.Column;
 
-public class Projeto extends IntDomain implements DTOConvertable<ProjetoDTO> {
+public class Projeto extends IntDomain implements DTOConvertable<ProjetoWriteDTO, ProjetoDTO> {
 
     @Column(nullable = false, unique = false)
     private String nome;
@@ -20,7 +21,7 @@ public class Projeto extends IntDomain implements DTOConvertable<ProjetoDTO> {
 
     public Projeto(){}
 
-    public Projeto(ProjetoDTO dto) {
+    public Projeto(ProjetoWriteDTO dto) {
         this.initBy(dto);
     }
 

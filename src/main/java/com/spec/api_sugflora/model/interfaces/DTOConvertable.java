@@ -5,12 +5,12 @@ import java.lang.reflect.Field;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
-public interface DTOConvertable<T> {
+public interface DTOConvertable<W, R> {
 
     @JsonIgnore
-    Class<T> getDTOClass();
+    Class<R> getDTOClass();
 
-    default void initBy(T classe) {
+    default void initBy(W classe) {
 
         Field[] fields = classe.getClass().getDeclaredFields();
 
@@ -41,12 +41,12 @@ public interface DTOConvertable<T> {
 
     }
 
-    default T toDTO() {
+    default R toDTO() {
         try {
-            Class<T> dtoClass = getDTOClass();
-            Constructor<T> constructor = dtoClass.getDeclaredConstructor();
+            Class<R> dtoClass = getDTOClass();
+            Constructor<R> constructor = dtoClass.getDeclaredConstructor();
             constructor.setAccessible(true);
-            T dto = constructor.newInstance();
+            R dto = constructor.newInstance();
             mapPropertiesUsingReflection(this, dto);
 
             return dto;
@@ -57,11 +57,11 @@ public interface DTOConvertable<T> {
         }
     }
 
-    default T toDTO(Class<T> dtoClass) {
+    default R toDTO(Class<R> dtoClass) {
         try {
-            Constructor<T> constructor = dtoClass.getDeclaredConstructor();
+            Constructor<R> constructor = dtoClass.getDeclaredConstructor();
             constructor.setAccessible(true);
-            T dto = constructor.newInstance();
+            R dto = constructor.newInstance();
             mapPropertiesUsingReflection(this, dto);
 
             return dto;
@@ -72,7 +72,7 @@ public interface DTOConvertable<T> {
         }
     }
 
-    default void mapPropertiesUsingReflection(Object source, T target) throws Exception {
+    default void mapPropertiesUsingReflection(Object source, R target) throws Exception {
         // Mapeia campos da classe atual
         mapFieldsFromClass(source, target, source.getClass());
 
@@ -84,7 +84,7 @@ public interface DTOConvertable<T> {
         }
     }
 
-    default void mapFieldsFromClass(Object source, T target, Class<?> sourceClass) throws Exception {
+    default void mapFieldsFromClass(Object source, R target, Class<?> sourceClass) throws Exception {
         Field[] sourceFields = sourceClass.getDeclaredFields();
 
         for (Field sourceField : sourceFields) {
