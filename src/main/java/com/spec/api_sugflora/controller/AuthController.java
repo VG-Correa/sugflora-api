@@ -40,7 +40,7 @@ public class AuthController {
             Authentication authentication = authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(LoginRequest.getUsername(), LoginRequest.getPassword())
                 );
-                
+
             SecurityContextHolder.getContext().setAuthentication(authentication);
                 
             UserDetails userDetails = userDetailsService.loadUserByUsername(LoginRequest.getUsername());

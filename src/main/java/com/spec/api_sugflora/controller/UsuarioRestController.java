@@ -6,12 +6,15 @@ import org.springframework.web.bind.annotation.RestController;
 import com.spec.api_sugflora.dto.UsuarioDTO;
 import com.spec.api_sugflora.dto.UsuarioWriteDTO;
 import com.spec.api_sugflora.model.Usuario;
+import com.spec.api_sugflora.model.responses.GenericResponse;
+import com.spec.api_sugflora.model.responses.InternalError;
 import com.spec.api_sugflora.service.UsuarioService;
 
 import jakarta.persistence.EntityExistsException;
 
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,9 +35,17 @@ public class UsuarioRestController {
     @Autowired
     UsuarioService usuarioService;
 
+    @Autowired
+    GenericResponse response;
+
+    public UsuarioRestController(){
+        response = new GenericResponse();
+    }
+
     @PostMapping("")
-    public ResponseEntity<HashMap<String, Object>> create(@RequestBody UsuarioWriteDTO usuarioWriteDTO) {
+    public ResponseEntity<GenericResponse> create(@RequestBody UsuarioWriteDTO usuarioWriteDTO) {
         
+
         try {
 
             System.err.println("UsuarioWriteDTO: ");
@@ -42,51 +53,52 @@ public class UsuarioRestController {
             Usuario usuario = new Usuario(usuarioWriteDTO);
             Usuario saved = usuarioService.save(usuario);
 
-            HashMap<String, Object> response = new HashMap<>();
-            response.put("mensagem", "Usuário criado com sucesso");
-            response.put("usuario", saved.toDTO());
+            response.setStatus(200)
+                .setError(false)
+                .setMessage("Usuario criado com sucesso")
+                .setData(saved.toDTO());
 
-
-            return ResponseEntity.status(HttpStatus.CREATED).body(response);
+            return ResponseEntity.status(response.getStatus()).body(response.build());
 
         } catch (IllegalArgumentException e) {
-            HashMap<String, Object> response = new HashMap<>();
-            response.put("Erro", "Dados inválidos");
-            response.put("mensagem", e.getMessage());
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
+            response.setStatus(400)
+                .setError(true)
+                .setMessage(e.getMessage());
+            return ResponseEntity.status(response.getStatus()).body(response.build());
 
         } catch (EntityExistsException e) {
-            HashMap<String, Object> response = new HashMap<>();
-            response.put("Erro", "Conflito de dados");
-            response.put("mensagem", e.getMessage());
-            return ResponseEntity.status(HttpStatus.CONFLICT).body(response);
+            response.setStatus(HttpStatus.CONFLICT.value())
+                .setError(true)
+                .setMessage(e.getMessage());
+
+            return ResponseEntity.status(response.getStatus()).body(response.build());
 
         } catch (Exception e) {
-            HashMap<String, Object> response = new HashMap<>();
-            response.put("Erro", "Erro interno");
-            response.put("mensagem", e.getMessage());
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
+            response.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value())
+                .setError(true)
+                .setMessage("Erro inesperado");
+            
+            return ResponseEntity.status(response.getStatus()).body(response.build());
         }
 
     }
 
     @GetMapping("")
-    public ResponseEntity<HashMap<String, Object>> getAll() {
+    public ResponseEntity<GenericResponse> getAll() {
 
         try {
             List<UsuarioDTO> usuarios = usuarioService.findAllDTO();
 
-            HashMap<String, Object> response = new HashMap<>();
-            response.put("total", usuarios.size());
-            response.put("usuarios", usuarios);
+            response.setStatus(HttpStatus.OK.value())
+                .setError(false)
+                .setData(usuarios)
+                .setMetadata(Map.of("total_items", usuarios.size()));
 
-            return ResponseEntity.status(HttpStatus.OK).body(response);
+            return ResponseEntity.status(response.getStatus()).body(response.build());
 
         } catch (Exception e) {
-            HashMap<String, Object> response = new HashMap<>();
-            response.put("Erro", "Erro interno");
-            response.put("mensagem", e.getMessage());
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
+            response = new InternalError();
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response.build());
         }
 
     }

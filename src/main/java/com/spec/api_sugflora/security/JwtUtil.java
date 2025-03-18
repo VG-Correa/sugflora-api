@@ -1,10 +1,11 @@
 package com.spec.api_sugflora.security;
 
 import io.jsonwebtoken.Claims;
-import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.security.Keys;
 import io.jsonwebtoken.JwtParserBuilder;
+import io.jsonwebtoken.Jwts;
+
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 
@@ -13,13 +14,20 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Function;
 
-@Component
+// @Component
 public class JwtUtil {
 
     private String SECRET_KEY = "secret";
 
     public String extractUsername(String token) {
         return extractClaim(token, Claims::getSubject);
+    }
+
+    public String refreshToken(String token) {
+        if (isTokenExpired(token)) {
+            return createToken(new HashMap<>(), extractUsername(token));
+        }
+        return token;  // Se o token não estiver expirado, retorna o token original
     }
 
     public Date extractExpiration(String token) {
@@ -30,8 +38,9 @@ public class JwtUtil {
         final Claims claims = extractAllClaims(token);
         return claimsResolver.apply(claims);
     }
+
     private Claims extractAllClaims(String token) {
-        return Jwts.parserBuilder().build().parseClaimsJws(token).getBody();
+        return null;
     }
 
     // TODO: PAREI AQUI

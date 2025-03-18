@@ -11,10 +11,8 @@ public class UsuarioDTO extends UuidDomainDTO implements DTO<Usuario>{
     private String nome;
     private String sobrenome;
     private String email;
-
     @JsonIgnore
     private String senha;
-
     private String cpf;
     private String rg;
     private String endereco;

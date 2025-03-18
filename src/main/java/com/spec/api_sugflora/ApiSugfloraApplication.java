@@ -1,5 +1,7 @@
 package com.spec.api_sugflora;
 
+import java.time.LocalDateTime;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
@@ -14,19 +16,19 @@ public class ApiSugfloraApplication implements CommandLineRunner {
 	@Autowired
 	private Environment environment;
 
-	private static volatile boolean carregando = true;
+	// private static volatile boolean carregando = true;
 
-	private static Thread loadingThread = new Thread(ApiSugfloraApplication::loading);
+	// private static Thread loadingThread = new Thread(ApiSugfloraApplication::loading);
 
 	public static void main(String[] args) {
-		loadingThread.start();
+		// loadingThread.start();
 		SpringApplication.run(ApiSugfloraApplication.class, args);
 	}
 
 	@Override
 	public void run(String... args) {
-		carregando = false;
-		loadingThread.interrupt();
+		// carregando = false;
+		// loadingThread.interrupt();
 
 		ComunsService.limparTerminal();
 
@@ -47,31 +49,8 @@ public class ApiSugfloraApplication implements CommandLineRunner {
 		System.err.println("\u001B[32m  Aplicação Iniciada\u001B[0m" +
 				"\n  Rodando no endereço: http://localhost:" + port +
 				"\n  Swagger: http://localhost:" + port + "/swagger-ui/index.html" +
+				"\n  Data e Hr: " + LocalDateTime.now()  +
 				"\n╚═════════════════════════════════════════════════════╝");
-	}
-
-	private static void loading() {
-		String baseMensagem = "Carregando Aplicação Sug-Flora";
-		String[] sufixos = { ".", "..", "...", "...." };
-
-		int i = 0;
-		while (carregando && !Thread.currentThread().isInterrupted()) {
-			// Limpa o terminal (Windows e Linux)
-			ComunsService.limparTerminal();
-
-			// Exibe a mensagem com a animação
-			System.out.println(baseMensagem + sufixos[i % sufixos.length]);
-
-			// Aguarda um pouco antes da próxima iteração
-			try {
-				Thread.sleep(1000); // Meio segundo
-			} catch (InterruptedException e) {
-				Thread.currentThread().interrupt();
-				break;
-			}
-
-			i++;
-		}
 	}
 
 }

@@ -1,6 +1,7 @@
 package com.spec.api_sugflora.service;
 
 import java.util.List;
+import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -103,6 +104,12 @@ public class UsuarioService {
         List<Usuario> usuarios = usuarioRepository.findAll();
         List<UsuarioDTO> usuariosDTO = usuarios.stream().map(Usuario::toDTO).toList();
         return usuariosDTO;
+    }
+
+    public Usuario findById(UUID usuario_dono_uuid) {
+        Usuario usuario = usuarioRepository.findById(usuario_dono_uuid).orElse(null);
+        
+        return usuario;
     }
 
 }
