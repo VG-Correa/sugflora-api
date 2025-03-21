@@ -11,12 +11,12 @@ import com.spec.api_sugflora.repository.ProjetoRepository;
 
 @Service
 public class ProjetoService {
-    
+
     @Autowired
     ProjetoRepository projetoRepository;
 
     public boolean existByNomeAndUsuarioUuid(String nome, UUID id_usuario_dono) {
-       return projetoRepository.findByNomeAndDonoId(nome, id_usuario_dono) !=null;
+        return projetoRepository.findByNomeAndDonoId(nome, id_usuario_dono) != null;
     }
 
     public Projeto save(Projeto projeto) throws Exception {
