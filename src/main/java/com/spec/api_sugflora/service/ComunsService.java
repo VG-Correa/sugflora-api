@@ -5,6 +5,7 @@ import org.springframework.stereotype.Service;
 @Service
 public class ComunsService {
 
+    @SuppressWarnings("deprecation")
     public static void limparTerminal() {
         try {
             if (System.getProperty("os.name").contains("Windows")) {

@@ -18,9 +18,18 @@ public class ApiSugfloraApplication implements CommandLineRunner {
 
 	// private static volatile boolean carregando = true;
 
-	// private static Thread loadingThread = new Thread(ApiSugfloraApplication::loading);
+	// private static Thread loadingThread = new
+	// Thread(ApiSugfloraApplication::loading);
 
 	public static void main(String[] args) {
+		ComunsService.limparTerminal();
+		System.out.println("\n" +
+				"╔═════════════════════════════════════════════════════╗\n" +
+				"║          SISTEMA ÚNICO DE GESTÃO - FLORA            ║\n" +
+				"╠═════════════════════════════════════════════════════╣\n" +
+				"  Iniciando aplicação...                            \n" +
+				"╚═════════════════════════════════════════════════════╝");
+
 		// loadingThread.start();
 		SpringApplication.run(ApiSugfloraApplication.class, args);
 	}
@@ -49,7 +58,7 @@ public class ApiSugfloraApplication implements CommandLineRunner {
 		System.err.println("\u001B[32m  Aplicação Iniciada\u001B[0m" +
 				"\n  Rodando no endereço: http://localhost:" + port +
 				"\n  Swagger: http://localhost:" + port + "/swagger-ui/index.html" +
-				"\n  Data e Hr: " + LocalDateTime.now()  +
+				"\n  Data e Hr: " + LocalDateTime.now() +
 				"\n╚═════════════════════════════════════════════════════╝");
 	}
 

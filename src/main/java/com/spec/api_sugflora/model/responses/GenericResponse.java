@@ -1,6 +1,5 @@
 package com.spec.api_sugflora.model.responses;
 
-import java.rmi.server.LogStream;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -15,20 +14,21 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @Component
 public class GenericResponse {
-    
+
     private Integer status;
     private boolean error;
     private String message;
     private Object metadata;
     private Object data;
 
-    public GenericResponse setData(Object obj){
-        try{
-            ((List)obj).size();
+    @SuppressWarnings({ "rawtypes", "unchecked" })
+    public GenericResponse setData(Object obj) {
+        try {
+            ((List) obj).size();
             data = obj;
-        }catch(Exception err){
+        } catch (Exception err) {
             data = new ArrayList<Object>();
-            ((ArrayList)data).add(obj);
+            ((ArrayList) data).add(obj);
         }
         return this;
     }
@@ -53,7 +53,7 @@ public class GenericResponse {
         return this;
     }
 
-    public GenericResponse(GenericResponse gr){
+    public GenericResponse(GenericResponse gr) {
         setStatus(gr.status);
         setError(gr.error);
         setData(gr.data);

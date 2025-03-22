@@ -6,7 +6,6 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 import com.spec.api_sugflora.model.IntDomain;
 
 import lombok.Data;
-import lombok.EqualsAndHashCode;
 
 @Data
 public abstract class IntDomainDTO {

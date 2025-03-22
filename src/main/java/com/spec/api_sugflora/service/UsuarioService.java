@@ -4,7 +4,6 @@ import java.util.List;
 import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import com.spec.api_sugflora.dto.UsuarioDTO;
@@ -18,7 +17,7 @@ import jakarta.persistence.EntityExistsException;
 public class UsuarioService {
     @Autowired
     UsuarioRepository usuarioRepository;
-    
+
     @Autowired
     SecurityConfiguration securityConfiguration;
 
@@ -28,7 +27,7 @@ public class UsuarioService {
     }
 
     public boolean userExistsByEmail(String email) {
-        boolean exist = findByEmail(email) != null ?  true :  false;
+        boolean exist = findByEmail(email) != null ? true : false;
         return exist;
     }
 
@@ -89,7 +88,7 @@ public class UsuarioService {
         } else if (userExistsByRg(user.getRg())) {
             throw new EntityExistsException("Já existe um usuário com este RG");
         }
-        
+
         user.setSenha(securityConfiguration.passwordEncoder().encode(user.getSenha()));
 
         Usuario novoUsuario = usuarioRepository.save(user);
@@ -108,7 +107,7 @@ public class UsuarioService {
 
     public Usuario findById(UUID usuario_dono_uuid) {
         Usuario usuario = usuarioRepository.findById(usuario_dono_uuid).orElse(null);
-        
+
         return usuario;
     }
 

@@ -19,7 +19,7 @@ public class ColetaDTO extends IntDomainDTO implements DTO<Coleta> {
     private FamiliaDTO familia;
     private GeneroDTO genero;
     private EspecieDTO especie;
-    private String coletor;
+    private String observacao;
 
     @Override
     public Class<Coleta> getModelClass() {

@@ -46,7 +46,7 @@ public class Coleta extends IntDomain implements DTOConvertable<ColetaWriteDTO, 
     private Especie especie;
 
     @Column(nullable = true, unique = false)
-    private String coletor;
+    private String observacao;
 
     public Coleta(ColetaWriteDTO coletaWriteDTO) {
         initBy(coletaWriteDTO);

@@ -16,6 +16,6 @@ public class ColetaWriteDTO {
     private Integer familia_id = null;
     private Integer genero_id = null;
     private Integer especie_id = null;
-    private String coletor;
+    private String observacao;
 
 }

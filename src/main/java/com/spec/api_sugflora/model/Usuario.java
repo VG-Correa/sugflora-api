@@ -10,15 +10,16 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.spec.api_sugflora.dto.UsuarioDTO;
 import com.spec.api_sugflora.dto.UsuarioWriteDTO;
-import com.spec.api_sugflora.model.interfaces.DTO;
 import com.spec.api_sugflora.model.interfaces.DTOConvertable;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 
 @Entity
 @Data
+@EqualsAndHashCode(callSuper = false)
 public class Usuario extends UuidDomain implements DTOConvertable<UsuarioWriteDTO, UsuarioDTO>, UserDetails {
 
     @Column(nullable = false, unique = true)

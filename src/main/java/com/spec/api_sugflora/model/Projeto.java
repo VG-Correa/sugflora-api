@@ -3,7 +3,6 @@ package com.spec.api_sugflora.model;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.spec.api_sugflora.dto.ProjetoDTO;
 import com.spec.api_sugflora.dto.ProjetoWriteDTO;
-import com.spec.api_sugflora.model.interfaces.DTO;
 import com.spec.api_sugflora.model.interfaces.DTOConvertable;
 
 import jakarta.persistence.Column;
@@ -12,10 +11,12 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 
 @Entity
 @Data
+@EqualsAndHashCode(callSuper = false)
 @AllArgsConstructor
 @NoArgsConstructor
 public class Projeto extends IntDomain implements DTOConvertable<ProjetoWriteDTO, ProjetoDTO> {
@@ -30,15 +31,17 @@ public class Projeto extends IntDomain implements DTOConvertable<ProjetoWriteDTO
     @JoinColumn(name = "usuario_dono_id", nullable = false, unique = false)
     private Usuario dono;
 
+    @Column(nullable = false, unique = false)
+    private boolean isPublic = false;
+
     public Projeto(ProjetoWriteDTO dto) {
         this.initBy(dto);
     }
 
     @Override
-    @JsonIgnore 
+    @JsonIgnore
     public Class<ProjetoDTO> getDTOClass() {
-       return ProjetoDTO.class;
+        return ProjetoDTO.class;
     }
-    
 
 }

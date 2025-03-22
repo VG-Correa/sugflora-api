@@ -1,22 +1,22 @@
 package com.spec.api_sugflora.dto;
 
 import com.spec.api_sugflora.model.Projeto;
-import com.spec.api_sugflora.model.Usuario;
 import com.spec.api_sugflora.model.interfaces.DTO;
-import com.spec.api_sugflora.model.interfaces.DTOConvertable;
 
-import jakarta.persistence.Column;
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 
 @Data
+@EqualsAndHashCode(callSuper = false)
 @AllArgsConstructor
 @NoArgsConstructor
 public class ProjetoDTO extends IntDomainDTO implements DTO<Projeto> {
     private String nome;
     private String descricao;
     private UsuarioDTO dono;
+    private boolean isPublic;
 
     public ProjetoDTO(Projeto projeto) {
         this.initBy(projeto);
@@ -24,6 +24,6 @@ public class ProjetoDTO extends IntDomainDTO implements DTO<Projeto> {
 
     @Override
     public Class<Projeto> getModelClass() {
-            return Projeto.class;
+        return Projeto.class;
     }
 }
