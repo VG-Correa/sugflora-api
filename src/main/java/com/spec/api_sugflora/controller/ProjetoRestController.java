@@ -1,26 +1,45 @@
 package com.spec.api_sugflora.controller;
 
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.client.HttpClientErrorException.NotFound;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.spec.api_sugflora.dto.ProjetoDTO;
 import com.spec.api_sugflora.dto.ProjetoWriteDTO;
+import com.spec.api_sugflora.exceptions.EntityAlreadActiveException;
+import com.spec.api_sugflora.exceptions.EntityAlreadyDeletedException;
 import com.spec.api_sugflora.model.Projeto;
 import com.spec.api_sugflora.model.Usuario;
+import com.spec.api_sugflora.model.responses.EntityAlreadyActiveResponse;
+import com.spec.api_sugflora.model.responses.EntityAlreadyDeletedResponse;
 import com.spec.api_sugflora.model.responses.GenericResponse;
-import com.spec.api_sugflora.model.responses.InternalError;
+import com.spec.api_sugflora.model.responses.InternalErrorResponse;
+import com.spec.api_sugflora.model.responses.NotFoundResponse;
 import com.spec.api_sugflora.repository.ProjetoRepository;
 import com.spec.api_sugflora.service.ProjetoService;
 import com.spec.api_sugflora.service.UsuarioService;
 
+import io.jsonwebtoken.io.IOException;
+import io.micrometer.observation.transport.Propagator.Getter;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.persistence.EntityExistsException;
+import jakarta.persistence.EntityNotFoundException;
 
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Bean;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -31,8 +50,6 @@ import org.springframework.web.bind.annotation.PathVariable;
 @RequestMapping("api/projeto")
 public class ProjetoRestController {
 
-    private final ProjetoRepository projetoRepository;
-
     @Autowired
     ProjetoService projetoService;
 
@@ -42,8 +59,11 @@ public class ProjetoRestController {
     @Autowired
     GenericResponse response;
 
-    ProjetoRestController(ProjetoRepository projetoRepository) {
-        this.projetoRepository = projetoRepository;
+    @Autowired
+    ProjetoRepository projetoRepository;
+
+    public ResponseEntity<GenericResponse> getResponse() {
+        return ResponseEntity.status(response.getStatus()).body(response.build());
     }
 
     @PostMapping("")
@@ -71,7 +91,7 @@ public class ProjetoRestController {
                 response.setStatus(209)
                         .setError(false)
                         .setMessage("Projeto cadastrado com sucesso")
-                        .setData(projeto);
+                        .setData(projeto.toDTO());
                 return ResponseEntity.status(201).body(response.build());
             } else {
                 response.setStatus(400)
@@ -87,7 +107,7 @@ public class ProjetoRestController {
             return ResponseEntity.status(response.getStatus()).body(response.build());
 
         } catch (Exception e) {
-            response = new InternalError(e);
+            response = new InternalErrorResponse(e);
             return ResponseEntity.badRequest().body(response.build());
         }
 
@@ -104,13 +124,13 @@ public class ProjetoRestController {
 
             return ResponseEntity.ok().body(response.build());
         } catch (Exception e) {
-            response = new InternalError(e);
+            response = new InternalErrorResponse(e);
             return ResponseEntity.badRequest().body(response.build());
         }
     }
 
     @GetMapping("{id}")
-    public ResponseEntity<GenericResponse> getById(@RequestParam Integer id) {
+    public ResponseEntity<GenericResponse> getById(@PathVariable Integer id) {
 
         try {
             Projeto projeto = projetoService.findById(id);
@@ -130,7 +150,7 @@ public class ProjetoRestController {
             return ResponseEntity.status(response.getStatus()).body(response.build());
 
         } catch (Exception e) {
-            response = new InternalError(e);
+            response = new InternalErrorResponse(e);
             return ResponseEntity.status(response.getStatus()).body(response.build());
         }
 
@@ -142,9 +162,21 @@ public class ProjetoRestController {
 
             Projeto projeto = projetoService.findById(projetoWriteDTO.getId());
             if (projeto == null) {
-                response.setStatus(404)
+                response = new NotFoundResponse(new Exception("Projeto não encontrado"));
+                return ResponseEntity.status(response.getStatus()).body(response.build());
+            }
+
+            boolean usuario_dono_exists = usuarioService.userExistsById(projetoWriteDTO.getUsuario_dono_uuid());
+
+            if (!usuario_dono_exists) {
+                throw new EntityExistsException("Usuário dono do projeto não encontrado");
+            }
+
+            if (projetoWriteDTO.getUsuario_dono_uuid() == null) {
+                response.setStatus(400)
                         .setError(true)
-                        .setMessage("Projeto não encontrado");
+                        .setMessage("UUID do usuário não pode ser nullo");
+
                 return ResponseEntity.status(response.getStatus()).body(response.build());
             }
 
@@ -178,10 +210,138 @@ public class ProjetoRestController {
             return ResponseEntity.status(response.getStatus()).body(response.build());
 
         } catch (Exception e) {
-            response = new InternalError(e);
+            response = new InternalErrorResponse(e);
             return ResponseEntity.status(response.getStatus()).body(response.build());
         }
 
     }
+
+    @GetMapping("/usuario/{id_usuario}")
+    public ResponseEntity<GenericResponse> getByUserId(@PathVariable UUID id_usuario) {
+
+        try {
+
+            List<Projeto> projetos = projetoService.findAllByUserId(id_usuario);
+            List<ProjetoDTO> projetoDTOs = projetos.stream().map(Projeto::toDTO).toList();
+
+            response.setError(false)
+                    .setStatus(200)
+                    .setData(projetoDTOs)
+                    .setMetadata(Map.of("total_items", projetoDTOs.size()));
+
+            return ResponseEntity.status(response.getStatus()).body(response.build());
+
+        } catch (EntityExistsException e) {
+            response = new NotFoundResponse(e);
+            return ResponseEntity.status(response.getStatus()).body(response.build());
+
+        } catch (Exception e) {
+            response = new InternalErrorResponse(e);
+            return ResponseEntity.status(response.getStatus()).body(response.build());
+        }
+
+    }
+
+    @DeleteMapping("force-delete/{id}")
+    public ResponseEntity<GenericResponse> forceDeleteProjeto(@PathVariable Integer id) {
+
+        try {
+
+            ProjetoDTO beckup = projetoService.forceDeleteById(id);
+            response.setStatus(200)
+                    .setError(false)
+                    .setData(beckup)
+                    .setMessage("Projeto '" + beckup.getNome() + "' Deletado com sucesso");
+
+            return ResponseEntity.status(response.getStatus()).body(response.build());
+
+        } catch (EntityNotFoundException e) {
+            response = new NotFoundResponse(e);
+            return ResponseEntity.status(response.getStatus()).body(response.build());
+        } catch (EntityAlreadyDeletedException e) {
+            response = new EntityAlreadyDeletedResponse(e.getMessage());
+            return ResponseEntity.status(response.getStatus()).body(response.build());
+
+        } catch (Exception e) {
+            response = new InternalErrorResponse(e);
+            return ResponseEntity.status(response.getStatus()).body(response.build());
+        }
+
+    }
+
+    @DeleteMapping("delete/{id}")
+    public ResponseEntity<GenericResponse> deleteProjeto(@PathVariable Integer id) {
+
+        try {
+
+            Projeto beckup = projetoService.deleteById(id);
+            response.setStatus(200)
+                    .setError(false)
+                    .setData(beckup.toDTO())
+                    .setMessage("Projeto " + beckup.getNome() + "Deletado com sucesso");
+
+            return ResponseEntity.status(response.getStatus()).body(response.build());
+
+        } catch (EntityNotFoundException e) {
+            response = new NotFoundResponse(e);
+            return ResponseEntity.status(response.getStatus()).body(response.build());
+        } catch (EntityAlreadyDeletedException e) {
+            response = new EntityAlreadyDeletedResponse(e.getMessage());
+            return ResponseEntity.status(response.getStatus()).body(response.build());
+        } catch (Exception e) {
+            response = new InternalErrorResponse(e);
+            return ResponseEntity.status(response.getStatus()).body(response.build());
+        }
+
+    }
+
+    @PutMapping("reactive/{id}")
+    public ResponseEntity<GenericResponse> reactiveProjeto(@PathVariable Integer id) {
+        
+        try {
+            projetoService.reactiveBYId(id);            
+
+            response.setStatus(200) 
+                .setMessage("Projeto reativado com sucesso")
+                .setError(false);
+
+                return getResponse();
+        } catch (EntityNotFoundException e) {
+            response = new NotFoundResponse(e);
+            return getResponse();
+        } catch (EntityAlreadActiveException e) {
+            response = new EntityAlreadyActiveResponse(e.getMessage());
+            return getResponse();
+        } catch (Exception e) {
+            response = new InternalErrorResponse(e);
+            return getResponse();
+        }
+
+    }
+
+    @RequestMapping(method = RequestMethod.POST, value = "/send")
+    public ResponseEntity<GenericResponse> postMethodName(@PathVariable Integer id,  @RequestPart MultipartFile imagem) {
+        
+        try {
+            projetoService.updateImagem(imagem, id);
+
+            response.setStatus(200)
+                .setMessage("Imagem atualizada com sucesso");
+             
+                return getResponse();
+
+        } catch (IOException e) {
+            response.setError(true)
+                .setStatus(400)
+                .setMessage(e.getMessage());
+            
+            return getResponse();
+        } catch (Exception e) {
+            response = new InternalErrorResponse(e);
+            return getResponse();
+        }
+
+    }
+    
 
 }

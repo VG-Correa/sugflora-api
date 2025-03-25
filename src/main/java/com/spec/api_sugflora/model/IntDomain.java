@@ -26,6 +26,9 @@ public abstract class IntDomain {
     
     @Column(nullable = true, unique = false)
     private Integer createdById;
+
+    @Column(nullable = false, unique = false)
+    private boolean deleted;
     
     @Column(nullable = true, unique = false)
     private Integer deletedById;

@@ -1,8 +1,8 @@
 package com.spec.api_sugflora.model.responses;
 
-public class InternalError extends GenericResponse {
+public class InternalErrorResponse extends GenericResponse {
 
-    public InternalError(Exception e) {
+    public InternalErrorResponse(Exception e) {
         System.out.println("InternalError");
         System.out.println(e.getMessage());
 

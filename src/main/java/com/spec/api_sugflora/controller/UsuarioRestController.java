@@ -7,7 +7,7 @@ import com.spec.api_sugflora.dto.UsuarioDTO;
 import com.spec.api_sugflora.dto.UsuarioWriteDTO;
 import com.spec.api_sugflora.model.Usuario;
 import com.spec.api_sugflora.model.responses.GenericResponse;
-import com.spec.api_sugflora.model.responses.InternalError;
+import com.spec.api_sugflora.model.responses.InternalErrorResponse;
 import com.spec.api_sugflora.service.UsuarioService;
 
 import jakarta.persistence.EntityExistsException;
@@ -67,7 +67,7 @@ public class UsuarioRestController {
             return ResponseEntity.status(response.getStatus()).body(response.build());
 
         } catch (Exception e) {
-            response = new InternalError(e);
+            response = new InternalErrorResponse(e);
 
             return ResponseEntity.status(response.getStatus()).body(response.build());
         }
@@ -88,7 +88,7 @@ public class UsuarioRestController {
             return ResponseEntity.status(response.getStatus()).body(response.build());
 
         } catch (Exception e) {
-            response = new InternalError(e);
+            response = new InternalErrorResponse(e);
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response.build());
         }
 

@@ -21,6 +21,7 @@ public class UsuarioService {
     @Autowired
     SecurityConfiguration securityConfiguration;
 
+
     public Usuario findByEmail(String email) {
         Usuario usuario = usuarioRepository.findByEmail(email).orElse(null);
         return usuario;
@@ -109,6 +110,10 @@ public class UsuarioService {
         Usuario usuario = usuarioRepository.findById(usuario_dono_uuid).orElse(null);
 
         return usuario;
+    }
+
+    public boolean userExistsById(UUID usuario_dono_uuid) {
+        return findById(usuario_dono_uuid) != null;
     }
 
 }

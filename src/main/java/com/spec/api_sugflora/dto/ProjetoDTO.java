@@ -1,5 +1,7 @@
 package com.spec.api_sugflora.dto;
 
+import org.springframework.web.multipart.MultipartFile;
+
 import com.spec.api_sugflora.model.Projeto;
 import com.spec.api_sugflora.model.interfaces.DTO;
 

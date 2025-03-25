@@ -34,6 +34,9 @@ public class Projeto extends IntDomain implements DTOConvertable<ProjetoWriteDTO
     @Column(nullable = false, unique = false)
     private boolean isPublic = false;
 
+    @Column(nullable = true, unique = false)
+    private byte[] imagem;
+
     public Projeto(ProjetoWriteDTO dto) {
         this.initBy(dto);
     }

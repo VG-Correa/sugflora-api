@@ -1,5 +1,6 @@
 package com.spec.api_sugflora.repository;
 
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -12,5 +13,7 @@ import com.spec.api_sugflora.model.Projeto;
 public interface ProjetoRepository extends JpaRepository<Projeto, Integer> {
     
     public Optional<Projeto> findByNomeAndDonoId(String nome, UUID donoUuid);
+
+    public Optional<List<Projeto>> findByDonoId(UUID id);
 
 }
