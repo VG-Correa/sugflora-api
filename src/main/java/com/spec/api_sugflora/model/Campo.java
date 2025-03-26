@@ -16,7 +16,8 @@ import lombok.EqualsAndHashCode;
 @EqualsAndHashCode(callSuper = false)
 public class Campo extends IntDomain implements DTOConvertable<CampoWriteDTO, CampoDTO> {
 
-    @Column(nullable = false, unique = false)
+    @ManyToOne
+    @JoinColumn(name = "responsavel_id", nullable = false, unique = false)
     private Usuario responsavel;
 
     @ManyToOne

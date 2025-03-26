@@ -318,30 +318,6 @@ public class ProjetoRestController {
         }
 
     }
-
-    @RequestMapping(method = RequestMethod.POST, value = "/send")
-    public ResponseEntity<GenericResponse> postMethodName(@PathVariable Integer id,  @RequestPart MultipartFile imagem) {
-        
-        try {
-            projetoService.updateImagem(imagem, id);
-
-            response.setStatus(200)
-                .setMessage("Imagem atualizada com sucesso");
-             
-                return getResponse();
-
-        } catch (IOException e) {
-            response.setError(true)
-                .setStatus(400)
-                .setMessage(e.getMessage());
-            
-            return getResponse();
-        } catch (Exception e) {
-            response = new InternalErrorResponse(e);
-            return getResponse();
-        }
-
-    }
     
 
 }
