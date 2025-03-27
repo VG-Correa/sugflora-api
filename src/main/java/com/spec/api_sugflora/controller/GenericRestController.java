@@ -1,5 +1,6 @@
 package com.spec.api_sugflora.controller;
 
+import org.apache.catalina.connector.Response;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RestController;
@@ -56,7 +57,15 @@ public class GenericRestController {
         return getResponse();
     }
 
-    public ResponseEntity<GenericResponse> getResponseEntityExistsException(EntityExistsException e) {
+    public ResponseEntity<GenericResponse> getResponseEntityExistsException(RuntimeException e) {
+        response.setStatus(409)
+            .setError(true)
+            .setMessage(e.getMessage());
+        
+        return getResponse();
+    }
+
+    public ResponseEntity<GenericResponse> getResponseEntityAlreadyDeletedException(RuntimeException e) {
         response.setStatus(409)
             .setError(true)
             .setMessage(e.getMessage());
@@ -70,6 +79,14 @@ public class GenericRestController {
             .setMessage(message);
         
             return getResponse();
+    }
+
+    public ResponseEntity<GenericResponse> getResponseInvalidEntity(RuntimeException e) {
+        response.setStatus(400)
+            .setError(true)
+            .setMessage(e.getMessage());
+        
+        return getResponse();
     }
 
 

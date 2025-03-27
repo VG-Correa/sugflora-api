@@ -13,6 +13,7 @@ public abstract class IntDomainDTO {
     @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm")
     private LocalDateTime createdAt;
     private Integer createdById;
+    private boolean deleted;
     private Integer deletedById;
     @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm")
     private LocalDateTime deletedAt;

@@ -10,6 +10,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class CampoWriteDTO {
+    private Integer id;
     private UUID usuario_responsavel_uuid;
     private Integer projeto_id;
     private String nome;
