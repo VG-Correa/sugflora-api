@@ -85,7 +85,7 @@ public class CampoRestController extends GenericRestController {
         } catch (EntityExistsException e) {
             return getResponseEntityExistsException(e);
         } catch (EntityNotFoundException e) {
-            return getResponseNotFound(e.getMessage());
+            return getResponseNotFound(e);
         } catch (Exception e) {
             return getResponseInternalError(e);
         }
@@ -109,7 +109,7 @@ public class CampoRestController extends GenericRestController {
             );
 
         } catch (EntityNotFoundException e) {
-            return getResponseNotFound(e.getMessage());
+            return getResponseNotFound(e);
         } catch (Exception e) {
             return getResponseInternalError(e);
         }
@@ -131,7 +131,7 @@ public class CampoRestController extends GenericRestController {
         } catch (EntityAlreadExistsException e) {
             return getResponseEntityExistsException(e);
         } catch (EntityNotFoundException e) {
-            return getResponseNotFound(e.getMessage());
+            return getResponseNotFound(e);
         } catch (EntityInvalidException e) {
             return getResponseInvalidEntity(e);
         } catch (Exception e) {
@@ -147,7 +147,7 @@ public class CampoRestController extends GenericRestController {
             CampoDTO beckup = campoService.delete(id);
             return getResponseOK("Campo deletado com sucesso", null, Map.of("beckup", beckup));
         } catch (EntityNotFoundException e) {
-            return getResponseNotFound(e.getMessage());
+            return getResponseNotFound(e);
         } catch (EntityAlreadyDeletedException e) {
             return getResponseEntityAlreadyDeletedException(e);
         } catch (Exception e) {

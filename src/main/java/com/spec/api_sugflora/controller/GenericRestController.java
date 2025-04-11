@@ -1,10 +1,17 @@
 package com.spec.api_sugflora.controller;
 
+import java.util.List;
+import java.util.stream.Collector;
+import java.util.stream.Collectors;
+
 import org.apache.catalina.connector.Response;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.spec.api_sugflora.exceptions.EntityNotFoundException;
+import com.spec.api_sugflora.model.interfaces.DTO;
+import com.spec.api_sugflora.model.interfaces.DTOConvertable;
 import com.spec.api_sugflora.model.responses.GenericResponse;
 import com.spec.api_sugflora.model.responses.InternalErrorResponse;
 
@@ -73,10 +80,10 @@ public class GenericRestController {
         return getResponse();
     }
     
-    public ResponseEntity<GenericResponse> getResponseNotFound(String message) {
+    public ResponseEntity<GenericResponse> getResponseNotFound(EntityNotFoundException e) {
         response.setStatus(404)
             .setError(true)
-            .setMessage(message);
+            .setMessage(e.getMessage());
         
             return getResponse();
     }
@@ -89,5 +96,10 @@ public class GenericRestController {
         return getResponse();
     }
 
+    public <R> List<R> toDTO(List<? extends DTOConvertable<?, R>> dtoConvertable) {
+        
+        return dtoConvertable.stream().map(conertable -> (R) conertable.toDTO()).collect(Collectors.toList());
+
+    }
 
 }
