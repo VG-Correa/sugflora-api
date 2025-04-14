@@ -1,6 +1,7 @@
 package com.spec.api_sugflora.controller;
 
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collector;
 import java.util.stream.Collectors;
 
@@ -27,77 +28,105 @@ public class GenericRestController {
         return ResponseEntity.status(response.getStatus()).body(response.build());
     }
 
+    public ResponseEntity<GenericResponse> getResponseCreated(String message, Object data, Object metadata) {
+        response.setStatus(201)
+                .setError(false)
+                .setData(data)
+                .setMessage(message)
+                .setMetadata(metadata);
+
+        return getResponse();
+    }
+
+    public ResponseEntity<GenericResponse> getResponseDeleted(String message, Object beckup) {
+        response.setStatus(200)
+                .setError(false)
+                .setMessage(message);
+        response.setMetadata(Map.of("beckup", beckup));
+
+        return getResponse();
+    }
+
+    public ResponseEntity<GenericResponse> getResponseCreated(String message, Object data) {
+        response.setStatus(201)
+                .setError(false)
+                .setData(data)
+                .setMessage(message);
+
+        return getResponse();
+    }
+
     public ResponseEntity<GenericResponse> getResponseOK(String message, Object data, Object metadata) {
         response.setStatus(200)
-            .setError(false)
-            .setData(data)
-            .setMessage(message)
-            .setMetadata(metadata);
-        
-            return getResponse();
+                .setError(false)
+                .setData(data)
+                .setMessage(message)
+                .setMetadata(metadata);
+
+        return getResponse();
     }
 
     public ResponseEntity<GenericResponse> getResponseOK(String message) {
         response.setStatus(200)
-            .setError(false)
-            .setMessage(message);
-        
-            return getResponse();
+                .setError(false)
+                .setMessage(message);
+
+        return getResponse();
     }
 
     public ResponseEntity<GenericResponse> getResponseOK(String message, Object data) {
         response.setStatus(200)
-            .setError(false)
-            .setData(data)
-            .setMessage(message);
-        
-            return getResponse();
+                .setError(false)
+                .setData(data)
+                .setMessage(message);
+
+        return getResponse();
     }
 
-    public ResponseEntity<GenericResponse> getResponseInternalError(Exception e){
+    public ResponseEntity<GenericResponse> getResponseInternalError(Exception e) {
         response = new InternalErrorResponse(e);
         return getResponse();
     }
 
-    public ResponseEntity<GenericResponse> getResponseInternalError(){
+    public ResponseEntity<GenericResponse> getResponseInternalError() {
         response = new InternalErrorResponse(new Exception("Erro interno do servidor"));
         return getResponse();
     }
 
     public ResponseEntity<GenericResponse> getResponseEntityExistsException(RuntimeException e) {
         response.setStatus(409)
-            .setError(true)
-            .setMessage(e.getMessage());
-        
+                .setError(true)
+                .setMessage(e.getMessage());
+
         return getResponse();
     }
 
     public ResponseEntity<GenericResponse> getResponseEntityAlreadyDeletedException(RuntimeException e) {
         response.setStatus(409)
-            .setError(true)
-            .setMessage(e.getMessage());
-        
+                .setError(true)
+                .setMessage(e.getMessage());
+
         return getResponse();
     }
-    
+
     public ResponseEntity<GenericResponse> getResponseNotFound(EntityNotFoundException e) {
         response.setStatus(404)
-            .setError(true)
-            .setMessage(e.getMessage());
-        
-            return getResponse();
+                .setError(true)
+                .setMessage(e.getMessage());
+
+        return getResponse();
     }
 
     public ResponseEntity<GenericResponse> getResponseInvalidEntity(RuntimeException e) {
         response.setStatus(400)
-            .setError(true)
-            .setMessage(e.getMessage());
-        
+                .setError(true)
+                .setMessage(e.getMessage());
+
         return getResponse();
     }
 
     public <R> List<R> toDTO(List<? extends DTOConvertable<?, R>> dtoConvertable) {
-        
+
         return dtoConvertable.stream().map(conertable -> (R) conertable.toDTO()).collect(Collectors.toList());
 
     }

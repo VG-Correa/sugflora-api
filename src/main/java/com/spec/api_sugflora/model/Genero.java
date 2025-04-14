@@ -9,12 +9,16 @@ import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+import lombok.NoArgsConstructor;
 
 @Entity
 @Data
 @EqualsAndHashCode(callSuper = false)
+@NoArgsConstructor
+@AllArgsConstructor
 public class Genero extends IntDomain implements DTOConvertable<GeneroWriteDTO, GeneroDTO> {
 
     @Column(nullable = false, unique = true)
@@ -26,6 +30,10 @@ public class Genero extends IntDomain implements DTOConvertable<GeneroWriteDTO, 
     @ManyToOne(optional = false)
     @JoinColumn(name = "familia_id", nullable = false)
     private Familia familia;
+
+    public Genero(GeneroWriteDTO generoWriteDTO) {
+        initBy(generoWriteDTO);
+    }
 
     @Override
     public Class<GeneroDTO> getDTOClass() {

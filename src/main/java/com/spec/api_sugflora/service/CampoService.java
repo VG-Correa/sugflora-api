@@ -27,8 +27,9 @@ public class CampoService {
     @Autowired
     CampoRepository campoRepository;
 
-    public Optional<Campo> findById(Integer id) {
-        Optional<Campo> campo = campoRepository.findById(id);
+    public Campo findById(Integer id) {
+        Campo campo = campoRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("Campo não encontrado com ID fornecido"));
         return campo;
     }
 
@@ -92,8 +93,7 @@ public class CampoService {
     @Transactional
     public CampoDTO update(CampoWriteDTO campoWriteDTO) {
 
-        Campo campo = findById(campoWriteDTO.getId())
-                .orElseThrow(() -> new EntityNotFoundException("Campo não localizado"));
+        Campo campo = findById(campoWriteDTO.getId());
 
         Campo campoExists = findByNomeAndResponsavelIdAndProjetoId(campoWriteDTO.getNome(),
                 campoWriteDTO.getUsuario_responsavel_uuid(), campoWriteDTO.getProjeto_id());
@@ -104,8 +104,6 @@ public class CampoService {
 
         isValid(campoWriteDTO);
 
-        
-
         CampoDTO campoBeckup = campo.toDTO();
         campo.initBy(campoWriteDTO);
 
@@ -114,9 +112,7 @@ public class CampoService {
 
     @Transactional
     public CampoDTO delete(Integer id) {
-        Campo campo = findById(id).orElseThrow(() -> 
-            new EntityNotFoundException("Campo informado não encontrado")
-        );
+        Campo campo = findById(id);
 
         if (campo.isDeleted()) {
             throw new EntityAlreadyDeletedException("Campo já está deletado");
@@ -131,7 +127,5 @@ public class CampoService {
 
         return beckup;
     }
-
-
 
 }

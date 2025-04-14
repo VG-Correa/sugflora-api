@@ -10,12 +10,16 @@ import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+import lombok.NoArgsConstructor;
 
 @Entity
 @Data
 @EqualsAndHashCode(callSuper = false)
+@AllArgsConstructor
+@NoArgsConstructor
 public class Coleta extends IntDomain implements DTOConvertable<ColetaWriteDTO, ColetaDTO> {
 
     @ManyToOne
@@ -55,6 +59,40 @@ public class Coleta extends IntDomain implements DTOConvertable<ColetaWriteDTO, 
     @Override
     public Class<ColetaDTO> getDTOClass() {
         return ColetaDTO.class;
+    }
+
+    public boolean isValid() {
+
+        if (this.getProjeto() == null) {
+            throw new IllegalArgumentException("Projeto não pode ser nulo");
+        }
+
+        if (this.getProjeto().getId() == null) {
+            throw new IllegalArgumentException("Projeto não pode ser nulo");
+        }
+
+        if (this.getCampo() == null) {
+            throw new IllegalArgumentException("Campo não pode ser nulo");
+        }
+        if (this.getCampo().getId() == null) {
+            throw new IllegalArgumentException("Campo não pode ser nulo");
+        }
+        if (this.getCampo().getId() <= 0) {
+            throw new IllegalArgumentException("Campo não pode ser nulo");
+        }
+        if (this.getResponsavel() == null || this.getResponsavel().getId() == null) {
+            throw new IllegalArgumentException("Responsável não pode ser nulo");
+        }
+
+        if (this.getFamilia() == null && this.getGenero() != null) {
+            throw new IllegalArgumentException("Familia não pode ser nulo se o gênero for informado");
+        }
+
+        if (this.getGenero() == null && this.getEspecie() != null) {
+            throw new IllegalArgumentException("Gênero não pode ser nulo se a espécie for informada");
+        }
+
+        return true;
     }
 
 }
