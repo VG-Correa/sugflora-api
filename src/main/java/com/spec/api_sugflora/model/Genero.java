@@ -1,5 +1,6 @@
 package com.spec.api_sugflora.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.spec.api_sugflora.dto.FamiliaDTO;
 import com.spec.api_sugflora.dto.GeneroDTO;
 import com.spec.api_sugflora.dto.GeneroWriteDTO;
@@ -29,6 +30,7 @@ public class Genero extends IntDomain implements DTOConvertable<GeneroWriteDTO, 
 
     @ManyToOne(optional = false)
     @JoinColumn(name = "familia_id", nullable = false)
+    @JsonIgnore
     private Familia familia;
 
     public Genero(GeneroWriteDTO generoWriteDTO) {

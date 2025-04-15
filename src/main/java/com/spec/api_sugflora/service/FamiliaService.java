@@ -34,17 +34,12 @@ public class FamiliaService {
 
     public Familia findByIdOrThrow(Integer familia_id) {
         Optional<Familia> familia = findById(familia_id);
-        if (familia.isPresent()) {
+        if (familia != null && familia.isPresent()) {
             return familia.get();
         } else {
             throw new EntityNotFoundException("Familia não encontrada com o id: " + familia_id);
         }
 
-    }
-
-    public boolean haveGeneroId(Integer id) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'haveGeneroId'");
     }
 
     public Familia findByNameOrThrow(String name) {

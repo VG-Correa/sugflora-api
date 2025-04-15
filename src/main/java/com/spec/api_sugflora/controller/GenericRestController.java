@@ -10,6 +10,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.spec.api_sugflora.exceptions.EntityAlreadActiveException;
+import com.spec.api_sugflora.exceptions.EntityAlreadExistsException;
+import com.spec.api_sugflora.exceptions.EntityAlreadyDeletedException;
+import com.spec.api_sugflora.exceptions.EntityInvalidException;
 import com.spec.api_sugflora.exceptions.EntityNotFoundException;
 import com.spec.api_sugflora.model.interfaces.DTO;
 import com.spec.api_sugflora.model.interfaces.DTOConvertable;
@@ -93,7 +97,7 @@ public class GenericRestController {
         return getResponse();
     }
 
-    public ResponseEntity<GenericResponse> getResponseEntityExistsException(RuntimeException e) {
+    public ResponseEntity<GenericResponse> getResponseEntityExistsException(EntityAlreadExistsException e) {
         response.setStatus(409)
                 .setError(true)
                 .setMessage(e.getMessage());
@@ -101,12 +105,22 @@ public class GenericRestController {
         return getResponse();
     }
 
-    public ResponseEntity<GenericResponse> getResponseEntityAlreadyDeletedException(RuntimeException e) {
+    public ResponseEntity<GenericResponse> getResponseEntityAlreadyDeletedException(EntityAlreadyDeletedException e) {
         response.setStatus(409)
                 .setError(true)
                 .setMessage(e.getMessage());
 
         return getResponse();
+    }
+
+    public ResponseEntity<GenericResponse> getResponseEntityAlreadyActiveException(EntityAlreadActiveException e) {
+
+        response.setStatus(400)
+            .setError(true)
+            .setMessage(e.getMessage());
+
+        return getResponse();
+
     }
 
     public ResponseEntity<GenericResponse> getResponseNotFound(EntityNotFoundException e) {
@@ -117,12 +131,36 @@ public class GenericRestController {
         return getResponse();
     }
 
-    public ResponseEntity<GenericResponse> getResponseInvalidEntity(RuntimeException e) {
+    public ResponseEntity<GenericResponse> getResponseInvalidEntity(EntityInvalidException e) {
         response.setStatus(400)
                 .setError(true)
                 .setMessage(e.getMessage());
 
         return getResponse();
+    }
+
+    public ResponseEntity<GenericResponse> getResponseException(Exception e) {
+
+        if (e instanceof EntityAlreadExistsException) {
+            return getResponseEntityExistsException((EntityAlreadExistsException)e);
+        } else
+        if (e instanceof EntityAlreadyDeletedException) {
+            return getResponseEntityAlreadyDeletedException((EntityAlreadyDeletedException)e);
+        } else 
+        if (e instanceof EntityNotFoundException) {
+            return getResponseNotFound((EntityNotFoundException)e);
+        } else 
+        if (e instanceof EntityInvalidException) {
+            return getResponseInvalidEntity((EntityInvalidException)e);
+        } else 
+        if (e instanceof EntityAlreadActiveException) {
+            return getResponseEntityAlreadyActiveException((EntityAlreadActiveException)e);
+        }
+
+        else {
+            return getResponseInternalError(e);
+        }
+
     }
 
     public <R> List<R> toDTO(List<? extends DTOConvertable<?, R>> dtoConvertable) {

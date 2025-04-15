@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.spec.api_sugflora.dto.UsuarioDTO;
+import com.spec.api_sugflora.exceptions.EntityInvalidException;
 import com.spec.api_sugflora.model.Usuario;
 import com.spec.api_sugflora.repository.UsuarioRepository;
 import com.spec.api_sugflora.security.SecurityConfiguration;
@@ -64,17 +65,17 @@ public class UsuarioService {
 
     public void isValid(Usuario usuario) {
         if (usuario.getCpf() == null) {
-            throw new IllegalArgumentException("CPF não pode ser nulo");
+            throw new EntityInvalidException("CPF não pode ser nulo");
         } else if (usuario.getRg() == null) {
-            throw new IllegalArgumentException("RG não pode ser nulo");
+            throw new EntityInvalidException("RG não pode ser nulo");
         } else if (usuario.getEmail() == null) {
-            throw new IllegalArgumentException("E-mail não pode ser nulo");
+            throw new EntityInvalidException("E-mail não pode ser nulo");
         } else if (usuario.getUsername() == null) {
-            throw new IllegalArgumentException("Username não pode ser nulo");
+            throw new EntityInvalidException("Username não pode ser nulo");
         } else if (usuario.getSenha() == null) {
-            throw new IllegalArgumentException("Senha não pode ser nula");
+            throw new EntityInvalidException("Senha não pode ser nula");
         } else if (usuario.getRole() == null) {
-            throw new IllegalArgumentException("Role não pode ser nula");
+            throw new EntityInvalidException("Role não pode ser nula");
         }
     }
 

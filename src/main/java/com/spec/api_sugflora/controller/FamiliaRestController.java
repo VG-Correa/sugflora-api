@@ -49,8 +49,6 @@ public class FamiliaRestController extends GenericRestController {
             return getResponseEntityExistsException(e);
         } catch (EntityInvalidException e) {
             return getResponseInvalidEntity(e);
-        } catch (IllegalArgumentException e) {
-            return getResponseInvalidEntity(e);
         } catch (NullPointerException e) {
             return getResponseInternalError(e);
 
@@ -107,8 +105,6 @@ public class FamiliaRestController extends GenericRestController {
             return getResponseNotFound(e);
         } catch (EntityInvalidException e) {
             return getResponseInvalidEntity(e);
-        } catch (IllegalArgumentException e) {
-            return getResponseInvalidEntity(e);
         } catch (NullPointerException e) {
             return getResponseInternalError(e);
         } catch (EntityAlreadExistsException e) {
@@ -131,8 +127,6 @@ public class FamiliaRestController extends GenericRestController {
         } catch (EntityNotFoundException e) {
             return getResponseNotFound(e);
         } catch (EntityInvalidException e) {
-            return getResponseInvalidEntity(e);
-        } catch (IllegalArgumentException e) {
             return getResponseInvalidEntity(e);
         } catch (NullPointerException e) {
             return getResponseInternalError(e);

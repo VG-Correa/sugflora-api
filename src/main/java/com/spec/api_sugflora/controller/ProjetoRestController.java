@@ -48,7 +48,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 
 @RestController
 @RequestMapping("api/projeto")
-public class ProjetoRestController {
+public class ProjetoRestController extends GenericRestController{
 
     @Autowired
     ProjetoService projetoService;
@@ -61,10 +61,6 @@ public class ProjetoRestController {
 
     @Autowired
     ProjetoRepository projetoRepository;
-
-    public ResponseEntity<GenericResponse> getResponse() {
-        return ResponseEntity.status(response.getStatus()).body(response.build());
-    }
 
     @PostMapping("")
     public ResponseEntity<GenericResponse> novo(@RequestBody ProjetoWriteDTO projetoWriteDTO) {
@@ -301,20 +297,10 @@ public class ProjetoRestController {
         try {
             projetoService.reactiveBYId(id);            
 
-            response.setStatus(200) 
-                .setMessage("Projeto reativado com sucesso")
-                .setError(false);
+            return getResponseOK("Projeto ativado com sucesso");
 
-                return getResponse();
-        } catch (EntityNotFoundException e) {
-            response = new NotFoundResponse(e);
-            return getResponse();
-        } catch (EntityAlreadActiveException e) {
-            response = new EntityAlreadyActiveResponse(e.getMessage());
-            return getResponse();
         } catch (Exception e) {
-            response = new InternalErrorResponse(e);
-            return getResponse();
+            return getResponseException(e);
         }
 
     }

@@ -82,7 +82,7 @@ public class CampoRestController extends GenericRestController {
                 saved.toDTO()
             );         
 
-        } catch (EntityExistsException e) {
+        } catch (EntityAlreadExistsException e) {
             return getResponseEntityExistsException(e);
         } catch (EntityNotFoundException e) {
             return getResponseNotFound(e);
