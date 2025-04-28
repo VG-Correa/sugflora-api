@@ -3,7 +3,7 @@ package com.spec.api_sugflora.model;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.spec.api_sugflora.dto.ProjetoDTO;
 import com.spec.api_sugflora.dto.ProjetoWriteDTO;
-import com.spec.api_sugflora.model.interfaces.DTOConvertable;
+import com.spec.speedspring.core.dtoConvertable.DTOConvertable;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -45,6 +45,11 @@ public class Projeto extends IntDomain implements DTOConvertable<ProjetoWriteDTO
     @JsonIgnore
     public Class<ProjetoDTO> getDTOClass() {
         return ProjetoDTO.class;
+    }
+
+    @Override
+    public boolean getLog() {
+        return false;
     }
 
 }

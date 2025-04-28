@@ -10,18 +10,18 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.spec.api_sugflora.dto.ProjetoDTO;
 import com.spec.api_sugflora.dto.ProjetoWriteDTO;
-import com.spec.api_sugflora.exceptions.EntityAlreadActiveException;
-import com.spec.api_sugflora.exceptions.EntityAlreadyDeletedException;
 import com.spec.api_sugflora.model.Projeto;
 import com.spec.api_sugflora.model.Usuario;
-import com.spec.api_sugflora.model.responses.EntityAlreadyActiveResponse;
-import com.spec.api_sugflora.model.responses.EntityAlreadyDeletedResponse;
-import com.spec.api_sugflora.model.responses.GenericResponse;
-import com.spec.api_sugflora.model.responses.InternalErrorResponse;
-import com.spec.api_sugflora.model.responses.NotFoundResponse;
 import com.spec.api_sugflora.repository.ProjetoRepository;
 import com.spec.api_sugflora.service.ProjetoService;
 import com.spec.api_sugflora.service.UsuarioService;
+import com.spec.speedspring.core.controller.GenericRestController;
+import com.spec.speedspring.core.exception.EntityAlreadyDeletedException;
+import com.spec.speedspring.core.exception.EntityInvalidException;
+import com.spec.speedspring.core.responses.EntityAlreadyDeletedResponse;
+import com.spec.speedspring.core.responses.GenericResponse;
+import com.spec.speedspring.core.responses.InternalErrorResponse;
+import com.spec.speedspring.core.responses.NotFoundResponse;
 
 import io.jsonwebtoken.io.IOException;
 import io.micrometer.observation.transport.Propagator.Getter;
@@ -48,16 +48,13 @@ import org.springframework.web.bind.annotation.PathVariable;
 
 @RestController
 @RequestMapping("api/projeto")
-public class ProjetoRestController extends GenericRestController{
+public class ProjetoRestController extends GenericRestController {
 
     @Autowired
     ProjetoService projetoService;
 
     @Autowired
     UsuarioService usuarioService;
-
-    @Autowired
-    GenericResponse response;
 
     @Autowired
     ProjetoRepository projetoRepository;
@@ -72,10 +69,7 @@ public class ProjetoRestController extends GenericRestController{
             Usuario usuarioDono = usuarioService.findById(projetoWriteDTO.getUsuario_dono_uuid());
 
             if (usuarioDono == null) {
-                response.setStatus(400)
-                        .setError(true)
-                        .setMessage("Usuário dono do projeto não foi localizado");
-                return ResponseEntity.badRequest().body(response.build());
+                throw new EntityNotFoundException("Usuário dono do projeto não localizado");
             }
 
             projeto.setDono(usuarioDono);
@@ -84,27 +78,13 @@ public class ProjetoRestController extends GenericRestController{
             Projeto saved = projetoService.save(projeto);
 
             if (saved != null) {
-                response.setStatus(209)
-                        .setError(false)
-                        .setMessage("Projeto cadastrado com sucesso")
-                        .setData(projeto.toDTO());
-                return ResponseEntity.status(201).body(response.build());
+                return getResponseCreated("Projeto criado com sucesso", saved.toDTO());
             } else {
-                response.setStatus(400)
-                        .setError(false)
-                        .setMessage("Erro ao cadastrar projeto");
-                return ResponseEntity.badRequest().body(response.build());
+                return getResponseInternalError();
             }
 
-        } catch (EntityExistsException entityExistsException) {
-            response.setStatus(409)
-                    .setError(true)
-                    .setMessage(entityExistsException.getMessage());
-            return ResponseEntity.status(response.getStatus()).body(response.build());
-
         } catch (Exception e) {
-            response = new InternalErrorResponse(e);
-            return ResponseEntity.badRequest().body(response.build());
+            return getResponseException(e);
         }
 
     }
@@ -113,15 +93,10 @@ public class ProjetoRestController extends GenericRestController{
     public ResponseEntity<GenericResponse> getAll() {
         try {
             List<Projeto> projetos = projetoService.findAll();
+            return getResponseOK(null, toDTO(projetos), Map.of("total_items", projetos.size()));
 
-            response.setStatus(200)
-                    .setMetadata(Map.of("total_items", projetos.size()))
-                    .setData(projetos.stream().map(Projeto::toDTO).toList());
-
-            return ResponseEntity.ok().body(response.build());
         } catch (Exception e) {
-            response = new InternalErrorResponse(e);
-            return ResponseEntity.badRequest().body(response.build());
+            return getResponseException(e);
         }
     }
 
@@ -129,25 +104,11 @@ public class ProjetoRestController extends GenericRestController{
     public ResponseEntity<GenericResponse> getById(@PathVariable Integer id) {
 
         try {
-            Projeto projeto = projetoService.findById(id);
-
-            if (projeto == null) {
-                response.setStatus(404)
-                        .setError(true)
-                        .setMessage("Projeto não encontrado");
-                return ResponseEntity.status(response.getStatus()).body(response.build());
-            }
-
-            response.setStatus(200)
-                    .setMessage("Projeto localizado")
-                    .setError(false)
-                    .setData(projeto.toDTO());
-
-            return ResponseEntity.status(response.getStatus()).body(response.build());
+            Projeto projeto = projetoService.findByIdOrThrow(id);
+            return getResponseOK("Projeto encontrado", projeto.toDTO());
 
         } catch (Exception e) {
-            response = new InternalErrorResponse(e);
-            return ResponseEntity.status(response.getStatus()).body(response.build());
+            return getResponseException(e);
         }
 
     }
@@ -156,11 +117,7 @@ public class ProjetoRestController extends GenericRestController{
     public ResponseEntity<GenericResponse> UpdateProjeto(@RequestBody ProjetoWriteDTO projetoWriteDTO) {
         try {
 
-            Projeto projeto = projetoService.findById(projetoWriteDTO.getId());
-            if (projeto == null) {
-                response = new NotFoundResponse(new Exception("Projeto não encontrado"));
-                return ResponseEntity.status(response.getStatus()).body(response.build());
-            }
+            Projeto projeto = projetoService.findByIdOrThrow(projetoWriteDTO.getId());
 
             boolean usuario_dono_exists = usuarioService.userExistsById(projetoWriteDTO.getUsuario_dono_uuid());
 
@@ -168,46 +125,24 @@ public class ProjetoRestController extends GenericRestController{
                 throw new EntityExistsException("Usuário dono do projeto não encontrado");
             }
 
-            if (projetoWriteDTO.getUsuario_dono_uuid() == null) {
-                response.setStatus(400)
-                        .setError(true)
-                        .setMessage("UUID do usuário não pode ser nullo");
-
-                return ResponseEntity.status(response.getStatus()).body(response.build());
-            }
-
             if (projetoWriteDTO.getUsuario_dono_uuid() != null
                     && projeto.getDono().getId() != projetoWriteDTO.getUsuario_dono_uuid()) {
-                response.setStatus(403)
-                        .setError(true)
-                        .setMessage("Impossível atrelar um projeto a um usuário que não é o dono");
-                return ResponseEntity.status(response.getStatus()).body(response.build());
+                return getResponseInvalidEntity(new EntityInvalidException(
+                        "Não é possível atualizar um projeto para um usuário que não é dono"));
+
             } else if (projetoWriteDTO.getUsuario_dono_uuid() == null) {
                 projetoWriteDTO.setUsuario_dono_uuid(projeto.getDono().getId());
             }
 
-            ProjetoDTO beckup = projeto.toDTO();
+            ProjetoDTO backup = projeto.toDTO();
             projeto.initBy(projetoWriteDTO);
 
             projetoService.update(projeto);
 
-            response.setStatus(200)
-                    .setError(false)
-                    .setMessage("Projeto atualizado com sucesso")
-                    .setData(projeto.toDTO())
-                    .setMetadata(Map.of("beckup", beckup));
-
-            return ResponseEntity.status(response.getStatus()).body(response.build());
-
-        } catch (EntityExistsException entityExistsException) {
-            response.setStatus(409)
-                    .setError(true)
-                    .setMessage(entityExistsException.getMessage());
-            return ResponseEntity.status(response.getStatus()).body(response.build());
+            return getResponseOK("Projeto atualizado com sucesso", projeto.toDTO(), Map.of("backup", backup));
 
         } catch (Exception e) {
-            response = new InternalErrorResponse(e);
-            return ResponseEntity.status(response.getStatus()).body(response.build());
+            return getResponseException(e);
         }
 
     }
@@ -216,24 +151,11 @@ public class ProjetoRestController extends GenericRestController{
     public ResponseEntity<GenericResponse> getByUserId(@PathVariable UUID id_usuario) {
 
         try {
-
             List<Projeto> projetos = projetoService.findAllByUserId(id_usuario);
-            List<ProjetoDTO> projetoDTOs = projetos.stream().map(Projeto::toDTO).toList();
-
-            response.setError(false)
-                    .setStatus(200)
-                    .setData(projetoDTOs)
-                    .setMetadata(Map.of("total_items", projetoDTOs.size()));
-
-            return ResponseEntity.status(response.getStatus()).body(response.build());
-
-        } catch (EntityExistsException e) {
-            response = new NotFoundResponse(e);
-            return ResponseEntity.status(response.getStatus()).body(response.build());
+            return getResponseOK(null, toDTO(projetos), Map.of("total_items", projetos.size()));
 
         } catch (Exception e) {
-            response = new InternalErrorResponse(e);
-            return ResponseEntity.status(response.getStatus()).body(response.build());
+            return getResponseException(e);
         }
 
     }
@@ -244,23 +166,10 @@ public class ProjetoRestController extends GenericRestController{
         try {
 
             ProjetoDTO beckup = projetoService.forceDeleteById(id);
-            response.setStatus(200)
-                    .setError(false)
-                    .setData(beckup)
-                    .setMessage("Projeto '" + beckup.getNome() + "' Deletado com sucesso");
-
-            return ResponseEntity.status(response.getStatus()).body(response.build());
-
-        } catch (EntityNotFoundException e) {
-            response = new NotFoundResponse(e);
-            return ResponseEntity.status(response.getStatus()).body(response.build());
-        } catch (EntityAlreadyDeletedException e) {
-            response = new EntityAlreadyDeletedResponse(e.getMessage());
-            return ResponseEntity.status(response.getStatus()).body(response.build());
+            return getResponseDeleted("Projeto " + beckup.getNome() + "deletado com sucesso", beckup);
 
         } catch (Exception e) {
-            response = new InternalErrorResponse(e);
-            return ResponseEntity.status(response.getStatus()).body(response.build());
+            return getResponseException(e);
         }
 
     }
@@ -271,31 +180,19 @@ public class ProjetoRestController extends GenericRestController{
         try {
 
             Projeto beckup = projetoService.deleteById(id);
-            response.setStatus(200)
-                    .setError(false)
-                    .setData(beckup.toDTO())
-                    .setMessage("Projeto " + beckup.getNome() + "Deletado com sucesso");
+            return getResponseDeleted("Projeto " + beckup.getNome() + "deletado com sucesso", beckup);
 
-            return ResponseEntity.status(response.getStatus()).body(response.build());
-
-        } catch (EntityNotFoundException e) {
-            response = new NotFoundResponse(e);
-            return ResponseEntity.status(response.getStatus()).body(response.build());
-        } catch (EntityAlreadyDeletedException e) {
-            response = new EntityAlreadyDeletedResponse(e.getMessage());
-            return ResponseEntity.status(response.getStatus()).body(response.build());
         } catch (Exception e) {
-            response = new InternalErrorResponse(e);
-            return ResponseEntity.status(response.getStatus()).body(response.build());
+            return getResponseException(e);
         }
 
     }
 
     @PutMapping("reactive/{id}")
     public ResponseEntity<GenericResponse> reactiveProjeto(@PathVariable Integer id) {
-        
+
         try {
-            projetoService.reactiveBYId(id);            
+            projetoService.reactiveBYId(id);
 
             return getResponseOK("Projeto ativado com sucesso");
 
@@ -304,6 +201,5 @@ public class ProjetoRestController extends GenericRestController{
         }
 
     }
-    
 
 }

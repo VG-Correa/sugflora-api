@@ -4,7 +4,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.spec.api_sugflora.dto.FamiliaDTO;
 import com.spec.api_sugflora.dto.GeneroDTO;
 import com.spec.api_sugflora.dto.GeneroWriteDTO;
-import com.spec.api_sugflora.model.interfaces.DTOConvertable;
+import com.spec.speedspring.core.dtoConvertable.DTOConvertable;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -40,6 +40,11 @@ public class Genero extends IntDomain implements DTOConvertable<GeneroWriteDTO, 
     @Override
     public Class<GeneroDTO> getDTOClass() {
         return GeneroDTO.class;
+    }
+
+    @Override
+    public boolean getLog() {
+        return false;
     }
 
 }

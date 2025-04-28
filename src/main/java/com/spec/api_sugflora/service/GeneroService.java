@@ -6,10 +6,10 @@ import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.spec.api_sugflora.exceptions.EntityAlreadExistsException;
 import com.spec.api_sugflora.model.Familia;
 import com.spec.api_sugflora.model.Genero;
 import com.spec.api_sugflora.repository.GeneroRepository;
+import com.spec.speedspring.core.exception.EntityAlreadExistsException;
 
 @Service
 public class GeneroService {

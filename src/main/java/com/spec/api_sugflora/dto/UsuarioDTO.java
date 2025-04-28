@@ -2,7 +2,7 @@ package com.spec.api_sugflora.dto;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.spec.api_sugflora.model.Usuario;
-import com.spec.api_sugflora.model.interfaces.DTO;
+import com.spec.speedspring.core.dto.DTO;
 
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -14,7 +14,7 @@ public class UsuarioDTO extends UuidDomainDTO implements DTO<Usuario> {
     private String nome;
     private String sobrenome;
     private String email;
-    
+
     private String cpf;
     private String rg;
     private String endereco;

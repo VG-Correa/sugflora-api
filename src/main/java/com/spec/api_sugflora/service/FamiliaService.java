@@ -7,11 +7,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.spec.api_sugflora.dto.FamiliaWriteDTO;
-import com.spec.api_sugflora.exceptions.EntityAlreadExistsException;
-import com.spec.api_sugflora.exceptions.EntityInvalidException;
-import com.spec.api_sugflora.exceptions.EntityNotFoundException;
 import com.spec.api_sugflora.model.Familia;
 import com.spec.api_sugflora.repository.FamiliaRepository;
+import com.spec.speedspring.core.exception.EntityAlreadExistsException;
+import com.spec.speedspring.core.exception.EntityInvalidException;
+import com.spec.speedspring.core.exception.EntityNotFoundException;
 
 import jakarta.transaction.Transactional;
 

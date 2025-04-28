@@ -6,7 +6,7 @@ import java.util.List;
 import com.spec.api_sugflora.dto.EspecieDTO;
 import com.spec.api_sugflora.dto.EspecieWriteDTO;
 import com.spec.api_sugflora.dto.GeneroDTO;
-import com.spec.api_sugflora.model.interfaces.DTOConvertable;
+import com.spec.speedspring.core.dtoConvertable.DTOConvertable;
 
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
@@ -39,6 +39,11 @@ public class Especie extends IntDomain implements DTOConvertable<EspecieWriteDTO
     @Override
     public Class<EspecieDTO> getDTOClass() {
         return EspecieDTO.class;
+    }
+
+    @Override
+    public boolean getLog() {
+        return false;
     }
 
 }

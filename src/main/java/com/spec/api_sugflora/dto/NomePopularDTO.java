@@ -1,7 +1,7 @@
 package com.spec.api_sugflora.dto;
 
 import com.spec.api_sugflora.model.NomePopular;
-import com.spec.api_sugflora.model.interfaces.DTO;
+import com.spec.speedspring.core.dto.DTO;
 
 import lombok.Data;
 import lombok.EqualsAndHashCode;

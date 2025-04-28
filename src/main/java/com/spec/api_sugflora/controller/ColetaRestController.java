@@ -14,10 +14,6 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.spec.api_sugflora.dto.ColetaDTO;
 import com.spec.api_sugflora.dto.ColetaWriteDTO;
-import com.spec.api_sugflora.exceptions.EntityAlreadExistsException;
-import com.spec.api_sugflora.exceptions.EntityAlreadyDeletedException;
-import com.spec.api_sugflora.exceptions.EntityInvalidException;
-import com.spec.api_sugflora.exceptions.EntityNotFoundException;
 import com.spec.api_sugflora.model.Campo;
 import com.spec.api_sugflora.model.Coleta;
 import com.spec.api_sugflora.model.Especie;
@@ -25,8 +21,6 @@ import com.spec.api_sugflora.model.Familia;
 import com.spec.api_sugflora.model.Genero;
 import com.spec.api_sugflora.model.Projeto;
 import com.spec.api_sugflora.model.Usuario;
-import com.spec.api_sugflora.model.interfaces.DTOConvertable;
-import com.spec.api_sugflora.model.responses.GenericResponse;
 import com.spec.api_sugflora.service.CampoService;
 import com.spec.api_sugflora.service.ColetaService;
 import com.spec.api_sugflora.service.EspecieService;
@@ -34,6 +28,8 @@ import com.spec.api_sugflora.service.FamiliaService;
 import com.spec.api_sugflora.service.GeneroService;
 import com.spec.api_sugflora.service.ProjetoService;
 import com.spec.api_sugflora.service.UsuarioService;
+import com.spec.speedspring.core.controller.GenericRestController;
+import com.spec.speedspring.core.responses.GenericResponse;
 
 @RestController
 @RequestMapping("api/coleta")
@@ -95,16 +91,10 @@ public class ColetaRestController extends GenericRestController {
 
             Coleta coletaSaved = coletaService.save(coleta);
 
-            return getResponseOK("Coleta criada com sucesso", coletaSaved);
-        } catch (EntityNotFoundException e) {
-            return getResponseNotFound(e);
-        } catch (EntityAlreadExistsException e) {
-            return getResponseEntityExistsException(e);
-        } catch (EntityInvalidException e) {
-            return getResponseInvalidEntity(e);
+            return getResponseCreated("Coleta criada com sucesso", coletaSaved);
 
         } catch (Exception e) {
-            return getResponseInternalError(e);
+            return getResponseException(e);
         }
     }
 
@@ -115,10 +105,8 @@ public class ColetaRestController extends GenericRestController {
             List<ColetaDTO> coletaDTOs = toDTO(coletas);
 
             return getResponseOK(null, coletaDTOs, Map.of("total_items", coletaDTOs.size()));
-        } catch (EntityNotFoundException e) {
-            return getResponseNotFound(e);
         } catch (Exception e) {
-            return getResponseInternalError(e);
+            return getResponseException(e);
         }
 
     }

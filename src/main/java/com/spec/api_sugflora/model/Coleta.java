@@ -4,7 +4,7 @@ import java.time.LocalDate;
 
 import com.spec.api_sugflora.dto.ColetaDTO;
 import com.spec.api_sugflora.dto.ColetaWriteDTO;
-import com.spec.api_sugflora.model.interfaces.DTOConvertable;
+import com.spec.speedspring.core.dtoConvertable.DTOConvertable;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -93,6 +93,11 @@ public class Coleta extends IntDomain implements DTOConvertable<ColetaWriteDTO, 
         }
 
         return true;
+    }
+
+    @Override
+    public boolean getLog() {
+        return false;
     }
 
 }

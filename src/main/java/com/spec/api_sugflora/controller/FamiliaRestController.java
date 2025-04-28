@@ -5,12 +5,12 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.spec.api_sugflora.dto.FamiliaDTO;
 import com.spec.api_sugflora.dto.FamiliaWriteDTO;
-import com.spec.api_sugflora.exceptions.EntityAlreadExistsException;
-import com.spec.api_sugflora.exceptions.EntityInvalidException;
-import com.spec.api_sugflora.exceptions.EntityNotFoundException;
 import com.spec.api_sugflora.model.Familia;
-import com.spec.api_sugflora.model.responses.GenericResponse;
 import com.spec.api_sugflora.service.FamiliaService;
+import com.spec.speedspring.core.controller.GenericRestController;
+import com.spec.speedspring.core.exception.EntityAlreadExistsException;
+import com.spec.speedspring.core.exception.EntityInvalidException;
+import com.spec.speedspring.core.responses.GenericResponse;
 
 import java.util.List;
 import java.util.Map;
@@ -45,15 +45,8 @@ public class FamiliaRestController extends GenericRestController {
 
             return getResponseCreated("Família criada com sucesso", familia);
 
-        } catch (EntityAlreadExistsException e) {
-            return getResponseEntityExistsException(e);
-        } catch (EntityInvalidException e) {
-            return getResponseInvalidEntity(e);
-        } catch (NullPointerException e) {
-            return getResponseInternalError(e);
-
         } catch (Exception e) {
-            return getResponseInternalError(e);
+            return getResponseException(e);
         }
 
     }
@@ -67,10 +60,8 @@ public class FamiliaRestController extends GenericRestController {
 
             return getResponseOK("Familia encontrada com sucesso", familia);
 
-        } catch (EntityNotFoundException e) {
-            return getResponseNotFound(e);
         } catch (Exception e) {
-            return getResponseInternalError(e);
+            return getResponseException(e);
         }
 
     }
@@ -85,7 +76,7 @@ public class FamiliaRestController extends GenericRestController {
                     Map.of("total_items", familiasDTOs.size()));
 
         } catch (Exception e) {
-            return getResponseInternalError(e);
+            return getResponseException(e);
         }
     }
 
@@ -101,16 +92,8 @@ public class FamiliaRestController extends GenericRestController {
 
             return getResponseOK("Familia atualizada com sucesso", familia);
 
-        } catch (EntityNotFoundException e) {
-            return getResponseNotFound(e);
-        } catch (EntityInvalidException e) {
-            return getResponseInvalidEntity(e);
-        } catch (NullPointerException e) {
-            return getResponseInternalError(e);
-        } catch (EntityAlreadExistsException e) {
-            return getResponseEntityExistsException(e);
         } catch (Exception e) {
-            return getResponseInternalError(e);
+            return getResponseException(e);
         }
     }
 
@@ -124,14 +107,8 @@ public class FamiliaRestController extends GenericRestController {
 
             return getResponseDeleted("Familia deletada com sucesso", familia);
 
-        } catch (EntityNotFoundException e) {
-            return getResponseNotFound(e);
-        } catch (EntityInvalidException e) {
-            return getResponseInvalidEntity(e);
-        } catch (NullPointerException e) {
-            return getResponseInternalError(e);
         } catch (Exception e) {
-            return getResponseInternalError(e);
+            return getResponseException(e);
         }
 
     }

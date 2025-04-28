@@ -7,12 +7,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.spec.api_sugflora.dto.UsuarioDTO;
-import com.spec.api_sugflora.exceptions.EntityInvalidException;
 import com.spec.api_sugflora.model.Usuario;
 import com.spec.api_sugflora.repository.UsuarioRepository;
 import com.spec.api_sugflora.security.SecurityConfiguration;
-
-import jakarta.persistence.EntityExistsException;
+import com.spec.speedspring.core.exception.EntityAlreadExistsException;
+import com.spec.speedspring.core.exception.EntityInvalidException;
 
 @Service
 public class UsuarioService {
@@ -21,7 +20,6 @@ public class UsuarioService {
 
     @Autowired
     SecurityConfiguration securityConfiguration;
-
 
     public Usuario findByEmail(String email) {
         Usuario usuario = usuarioRepository.findByEmail(email).orElse(null);
@@ -82,13 +80,13 @@ public class UsuarioService {
     public Usuario save(Usuario user) {
         isValid(user);
         if (userExistsByEmail(user.getEmail())) {
-            throw new EntityExistsException("Este e-mail já está cadastrado");
+            throw new EntityAlreadExistsException("Este e-mail já está cadastrado");
         } else if (userExistsByUsername(user.getUsername())) {
-            throw new EntityExistsException("Já existe um usuário com este username");
+            throw new EntityAlreadExistsException("Já existe um usuário com este username");
         } else if (userExistsByCPF(user.getCpf())) {
-            throw new EntityExistsException("Já existe um usuário com este CPF");
+            throw new EntityAlreadExistsException("Já existe um usuário com este CPF");
         } else if (userExistsByRg(user.getRg())) {
-            throw new EntityExistsException("Já existe um usuário com este RG");
+            throw new EntityAlreadExistsException("Já existe um usuário com este RG");
         }
 
         user.setSenha(securityConfiguration.passwordEncoder().encode(user.getSenha()));
@@ -97,7 +95,7 @@ public class UsuarioService {
         return novoUsuario;
     }
 
-    public Object findAll() {
+    public List<Usuario> findAll() {
         return usuarioRepository.findAll();
     }
 

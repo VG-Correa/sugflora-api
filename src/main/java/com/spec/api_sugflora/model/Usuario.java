@@ -10,7 +10,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.spec.api_sugflora.dto.UsuarioDTO;
 import com.spec.api_sugflora.dto.UsuarioWriteDTO;
-import com.spec.api_sugflora.model.interfaces.DTOConvertable;
+import com.spec.speedspring.core.dtoConvertable.DTOConvertable;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -95,6 +95,11 @@ public class Usuario extends UuidDomain implements DTOConvertable<UsuarioWriteDT
     @Override
     public boolean isEnabled() {
         return true;
+    }
+
+    @Override
+    public boolean getLog() {
+        return false;
     }
 
 }

@@ -2,7 +2,7 @@ package com.spec.api_sugflora.model;
 
 import com.spec.api_sugflora.dto.CampoDTO;
 import com.spec.api_sugflora.dto.CampoWriteDTO;
-import com.spec.api_sugflora.model.interfaces.DTOConvertable;
+import com.spec.speedspring.core.dtoConvertable.DTOConvertable;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -52,6 +52,11 @@ public class Campo extends IntDomain implements DTOConvertable<CampoWriteDTO, Ca
     @Override
     public Class<CampoDTO> getDTOClass() {
         return CampoDTO.class;
+    }
+
+    @Override
+    public boolean getLog() {
+        return false;
     }
 
 }

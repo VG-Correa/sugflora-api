@@ -11,12 +11,12 @@ import org.springframework.stereotype.Service;
 
 import com.spec.api_sugflora.dto.CampoDTO;
 import com.spec.api_sugflora.dto.CampoWriteDTO;
-import com.spec.api_sugflora.exceptions.EntityAlreadExistsException;
-import com.spec.api_sugflora.exceptions.EntityAlreadyDeletedException;
-import com.spec.api_sugflora.exceptions.EntityInvalidException;
-import com.spec.api_sugflora.exceptions.EntityNotFoundException;
 import com.spec.api_sugflora.model.Campo;
 import com.spec.api_sugflora.repository.CampoRepository;
+import com.spec.speedspring.core.exception.EntityAlreadExistsException;
+import com.spec.speedspring.core.exception.EntityAlreadyDeletedException;
+import com.spec.speedspring.core.exception.EntityInvalidException;
+import com.spec.speedspring.core.exception.EntityNotFoundException;
 
 import jakarta.persistence.EntityExistsException;
 import jakarta.transaction.Transactional;

@@ -5,9 +5,9 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.spec.api_sugflora.exceptions.EntityNotFoundException;
 import com.spec.api_sugflora.model.Coleta;
 import com.spec.api_sugflora.repository.ColetaRepository;
+import com.spec.speedspring.core.exception.EntityNotFoundException;
 
 @Service
 public class ColetaService {

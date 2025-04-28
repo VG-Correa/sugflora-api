@@ -2,7 +2,7 @@ package com.spec.api_sugflora.model;
 
 import com.spec.api_sugflora.dto.NomePopularDTO;
 import com.spec.api_sugflora.dto.NomePopularWriteDTO;
-import com.spec.api_sugflora.model.interfaces.DTOConvertable;
+import com.spec.speedspring.core.dtoConvertable.DTOConvertable;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -20,6 +20,11 @@ public class NomePopular extends IntDomain implements DTOConvertable<NomePopular
     @Override
     public Class<NomePopularDTO> getDTOClass() {
         return NomePopularDTO.class;
+    }
+
+    @Override
+    public boolean getLog() {
+        return false;
     }
 
 }

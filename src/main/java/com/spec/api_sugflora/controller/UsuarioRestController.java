@@ -6,9 +6,9 @@ import org.springframework.web.bind.annotation.RestController;
 import com.spec.api_sugflora.dto.UsuarioDTO;
 import com.spec.api_sugflora.dto.UsuarioWriteDTO;
 import com.spec.api_sugflora.model.Usuario;
-import com.spec.api_sugflora.model.responses.GenericResponse;
-import com.spec.api_sugflora.model.responses.InternalErrorResponse;
 import com.spec.api_sugflora.service.UsuarioService;
+import com.spec.speedspring.core.controller.GenericRestController;
+import com.spec.speedspring.core.responses.GenericResponse;
 
 import jakarta.persistence.EntityExistsException;
 
@@ -24,17 +24,10 @@ import org.springframework.web.bind.annotation.GetMapping;
 
 @RestController
 @RequestMapping("api/usuario")
-public class UsuarioRestController {
+public class UsuarioRestController extends GenericRestController {
 
     @Autowired
     UsuarioService usuarioService;
-
-    @Autowired
-    GenericResponse response;
-
-    public UsuarioRestController() {
-        response = new GenericResponse();
-    }
 
     @PostMapping("")
     public ResponseEntity<GenericResponse> create(@RequestBody UsuarioWriteDTO usuarioWriteDTO) {
@@ -46,30 +39,10 @@ public class UsuarioRestController {
             Usuario usuario = new Usuario(usuarioWriteDTO);
             Usuario saved = usuarioService.save(usuario);
 
-            response.setStatus(200)
-                    .setError(false)
-                    .setMessage("Usuario criado com sucesso")
-                    .setData(saved.toDTO());
-
-            return ResponseEntity.status(response.getStatus()).body(response.build());
-
-        } catch (IllegalArgumentException e) {
-            response.setStatus(400)
-                    .setError(true)
-                    .setMessage(e.getMessage());
-            return ResponseEntity.status(response.getStatus()).body(response.build());
-
-        } catch (EntityExistsException e) {
-            response.setStatus(HttpStatus.CONFLICT.value())
-                    .setError(true)
-                    .setMessage(e.getMessage());
-
-            return ResponseEntity.status(response.getStatus()).body(response.build());
+            return getResponseCreated("Usuário cadastrado com sucesso", saved.toDTO());
 
         } catch (Exception e) {
-            response = new InternalErrorResponse(e);
-
-            return ResponseEntity.status(response.getStatus()).body(response.build());
+            return getResponseException(e);
         }
 
     }
@@ -78,18 +51,11 @@ public class UsuarioRestController {
     public ResponseEntity<GenericResponse> getAll() {
 
         try {
-            List<UsuarioDTO> usuarios = usuarioService.findAllDTO();
-
-            response.setStatus(HttpStatus.OK.value())
-                    .setError(false)
-                    .setData(usuarios)
-                    .setMetadata(Map.of("total_items", usuarios.size()));
-
-            return ResponseEntity.status(response.getStatus()).body(response.build());
+            List<Usuario> usuarios = usuarioService.findAll();
+            return getResponseOK(null, toDTO(usuarios), Map.of("total_items", usuarios.size()));
 
         } catch (Exception e) {
-            response = new InternalErrorResponse(e);
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response.build());
+            return getResponseException(e);
         }
 
     }

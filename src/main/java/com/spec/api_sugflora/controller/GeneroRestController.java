@@ -13,14 +13,11 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.spec.api_sugflora.dto.GeneroWriteDTO;
-import com.spec.api_sugflora.exceptions.EntityAlreadActiveException;
-import com.spec.api_sugflora.exceptions.EntityAlreadExistsException;
-import com.spec.api_sugflora.exceptions.EntityNotFoundException;
 import com.spec.api_sugflora.model.Genero;
-import com.spec.api_sugflora.model.responses.GenericResponse;
 import com.spec.api_sugflora.service.FamiliaService;
 import com.spec.api_sugflora.service.GeneroService;
-
+import com.spec.speedspring.core.controller.GenericRestController;
+import com.spec.speedspring.core.responses.GenericResponse;
 
 @RestController
 @RequestMapping("/api/genero")
@@ -55,7 +52,7 @@ public class GeneroRestController extends GenericRestController {
         try {
             List<Genero> generos = generoService.findAllByFamiliaId(id_familia);
             return getResponseOK(null, generos, Map.of("total_items", generos.size()));
-        
+
         } catch (Exception e) {
             return getResponseException(e);
         }

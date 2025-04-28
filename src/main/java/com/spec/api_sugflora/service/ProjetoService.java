@@ -12,10 +12,10 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.spec.api_sugflora.dto.ProjetoDTO;
-import com.spec.api_sugflora.exceptions.EntityAlreadActiveException;
-import com.spec.api_sugflora.exceptions.EntityAlreadyDeletedException;
 import com.spec.api_sugflora.model.Projeto;
 import com.spec.api_sugflora.repository.ProjetoRepository;
+import com.spec.speedspring.core.exception.EntityAlreadActiveException;
+import com.spec.speedspring.core.exception.EntityAlreadyDeletedException;
 
 import jakarta.persistence.EntityExistsException;
 import jakarta.persistence.EntityNotFoundException;
@@ -133,10 +133,16 @@ public class ProjetoService {
 
     @Transactional
     public void updateImagem(MultipartFile imagem, Integer id) throws IOException {
-        
+
         Projeto projeto = findById(id);
         projeto.setImagem(imagem.getBytes());
-        
+
+    }
+
+    public Projeto findByIdOrThrow(Integer id) {
+        Projeto projeto = projetoRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("Usuário não encontrado"));
+        return projeto;
     }
 
 }
