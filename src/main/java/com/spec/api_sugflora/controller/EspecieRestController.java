@@ -12,16 +12,17 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.spec.api_sugflora.dto.GeneroWriteDTO;
-import com.spec.api_sugflora.model.Genero;
+import com.spec.api_sugflora.dto.EspecieWriteDTO;
+import com.spec.api_sugflora.model.Especie;
+import com.spec.api_sugflora.service.EspecieService;
 import com.spec.api_sugflora.service.FamiliaService;
 import com.spec.api_sugflora.service.GeneroService;
 import com.spec.speedspring.core.controller.GenericRestController;
 import com.spec.speedspring.core.responses.GenericResponse;
 
 @RestController
-@RequestMapping("api/genero")
-public class GeneroRestController extends GenericRestController {
+@RequestMapping("api/especie")
+public class EspecieRestController extends GenericRestController {
 
     @Autowired
     FamiliaService familiaService;
@@ -29,34 +30,37 @@ public class GeneroRestController extends GenericRestController {
     @Autowired
     GeneroService generoService;
 
+    @Autowired
+    EspecieService especieService;
+
     @PostMapping("")
-    public ResponseEntity<GenericResponse> create(@RequestBody GeneroWriteDTO generoWriteDTO) {
+    public ResponseEntity<GenericResponse> create(@RequestBody EspecieWriteDTO especieWriteDTO) {
         try {
-            System.err.println(generoWriteDTO);
 
-            Genero genero = new Genero(generoWriteDTO);
-            genero.setId(null);
-            genero.setFamilia(familiaService.findByIdOrThrow(generoWriteDTO.getFamilia_id()));
+            Especie especie = new Especie(especieWriteDTO);
+            especie.setId(null);
+            especie.setGenero(generoService.findByIdOrThrow(especieWriteDTO.getGenero_id()));
+            especie.setFamilia(especie.getGenero().getFamilia());
 
-            Genero generoSaved = generoService.save(genero);
-            return getResponseCreated("Genero criado com sucesso", generoSaved);
+            Especie saved = especieService.save(especie);
+
+            return getResponseCreated("Espécie criada com sucesso", saved);
 
         } catch (Exception e) {
             return getResponseException(e);
         }
     }
 
-    @GetMapping("familia/{id_familia}")
-    public ResponseEntity<GenericResponse> getByFamiliaId(@PathVariable Integer id_familia) {
-
+    @GetMapping("genero/{genero_id}")
+    public ResponseEntity<GenericResponse> getAllByGeneroId(@PathVariable Integer genero_id) {
         try {
-            List<Genero> generos = generoService.findAllByFamiliaId(id_familia);
-            return getResponseOK(null, generos, Map.of("total_items", generos.size()));
+
+            List<Especie> especies = especieService.findAllByGeneroId(genero_id);
+            return getResponseOK(null, toDTO(especies), Map.of("total_items", especies.size()));
 
         } catch (Exception e) {
             return getResponseException(e);
         }
-
     }
 
 }

@@ -14,11 +14,15 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
+import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+import lombok.NoArgsConstructor;
 
 @Entity
 @Data
+@AllArgsConstructor
+@NoArgsConstructor
 @EqualsAndHashCode(callSuper = false)
 public class Especie extends IntDomain implements DTOConvertable<EspecieWriteDTO, EspecieDTO> {
 
@@ -29,12 +33,20 @@ public class Especie extends IntDomain implements DTOConvertable<EspecieWriteDTO
     private String descricao;
 
     @ManyToOne
+    @JoinColumn(name = "familia_id")
+    private Familia familia;
+
+    @ManyToOne
     @JoinColumn(name = "genero_id")
     private Genero genero;
 
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "especie_id")
     private List<NomePopular> nomesPopulares = new ArrayList<>();
+
+    public Especie(EspecieWriteDTO especieWriteDTO) {
+        initBy(especieWriteDTO);
+    }
 
     @Override
     public Class<EspecieDTO> getDTOClass() {

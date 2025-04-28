@@ -11,6 +11,8 @@ import com.spec.api_sugflora.model.Genero;
 import com.spec.api_sugflora.repository.GeneroRepository;
 import com.spec.speedspring.core.exception.EntityAlreadExistsException;
 
+import jakarta.persistence.EntityNotFoundException;
+
 @Service
 public class GeneroService {
 
@@ -52,6 +54,11 @@ public class GeneroService {
 
         List<Genero> generos = generoRepository.findByFamiliaId(id_familia);
         return generos;
+    }
+
+    public Genero findByIdOrThrow(Integer genero_id) {
+        Genero genero = findById(genero_id).orElseThrow(() -> new EntityNotFoundException("Genero não encontrado"));
+        return genero;
     }
 
 }
