@@ -8,8 +8,6 @@ import com.spec.api_sugflora.dto.FamiliaWriteDTO;
 import com.spec.api_sugflora.model.Familia;
 import com.spec.api_sugflora.service.FamiliaService;
 import com.spec.speedspring.core.controller.GenericRestController;
-import com.spec.speedspring.core.exception.EntityAlreadExistsException;
-import com.spec.speedspring.core.exception.EntityInvalidException;
 import com.spec.speedspring.core.responses.GenericResponse;
 
 import java.util.List;
