@@ -1,6 +1,7 @@
 package com.spec.api_sugflora.service;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,6 +13,7 @@ import com.spec.api_sugflora.repository.UsuarioRepository;
 import com.spec.api_sugflora.security.SecurityConfiguration;
 import com.spec.speedspring.core.exception.EntityAlreadExistsException;
 import com.spec.speedspring.core.exception.EntityInvalidException;
+import com.spec.speedspring.core.exception.EntityNotFoundException;
 
 @Service
 public class UsuarioService {
@@ -105,14 +107,20 @@ public class UsuarioService {
         return usuariosDTO;
     }
 
-    public Usuario findById(UUID usuario_dono_uuid) {
-        Usuario usuario = usuarioRepository.findById(usuario_dono_uuid).orElse(null);
-
+    public Optional<Usuario> findById(UUID usuario_dono_uuid) {
+        Optional<Usuario> usuario = usuarioRepository.findById(usuario_dono_uuid);
         return usuario;
     }
 
     public boolean userExistsById(UUID usuario_dono_uuid) {
         return findById(usuario_dono_uuid) != null;
+    }
+
+    public Usuario findByIdOrThrow(UUID responsavel_id) {
+
+        Usuario usuario = findById(responsavel_id).orElseThrow(
+                () -> new EntityNotFoundException("Usuário não encontrado"));
+        return usuario;
     }
 
 }

@@ -13,8 +13,8 @@ import com.spec.api_sugflora.model.Genero;
 import com.spec.api_sugflora.repository.GeneroRepository;
 import com.spec.speedspring.core.exception.EntityAlreadExistsException;
 import com.spec.speedspring.core.exception.EntityInvalidException;
+import com.spec.speedspring.core.exception.EntityNotFoundException;
 
-import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 
 @Service
@@ -76,7 +76,6 @@ public class GeneroService {
         genero.initBy(generoWriteDTO);
         genero.updateDateNow();
 
-
         return genero;
     }
 
@@ -86,7 +85,7 @@ public class GeneroService {
         Genero genero = findByIdOrThrow(id);
         genero.setDeleted(true);
         genero.setDeletedAt(LocalDateTime.now());
-        genero.setDeletedById(null); 
+        genero.setDeletedById(null);
 
         genero.updateDateNow();
         return genero;
@@ -96,7 +95,7 @@ public class GeneroService {
         Genero genero = findByIdOrThrow(id);
         genero.setDeleted(false);
         genero.setDeletedAt(null);
-        genero.setDeletedById(null); 
+        genero.setDeletedById(null);
 
         genero.updateDateNow();
     }

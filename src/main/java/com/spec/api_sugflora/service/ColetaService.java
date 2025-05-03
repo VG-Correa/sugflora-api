@@ -5,12 +5,23 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.spec.api_sugflora.dto.ColetaWriteDTO;
 import com.spec.api_sugflora.model.Coleta;
+import com.spec.api_sugflora.model.Especie;
+import com.spec.api_sugflora.model.Familia;
+import com.spec.api_sugflora.model.Genero;
+import com.spec.api_sugflora.model.Usuario;
 import com.spec.api_sugflora.repository.ColetaRepository;
+import com.spec.speedspring.core.exception.EntityInvalidException;
 import com.spec.speedspring.core.exception.EntityNotFoundException;
+
+import jakarta.transaction.Transactional;
 
 @Service
 public class ColetaService {
+
+    @Autowired
+    UsuarioService usuarioService;
 
     @Autowired
     private ColetaRepository coletaRepository;
@@ -54,6 +65,73 @@ public class ColetaService {
         }
 
         return coletaRepository.save(coleta);
+    }
+
+    public Coleta findByIdOrThrow(Integer id) {
+        return coletaRepository.findById(id).orElseThrow(
+                () -> new EntityNotFoundException("Coleta não localizada"));
+    }
+
+    @Transactional
+    public Coleta update(ColetaWriteDTO coletaWriteDTO) {
+
+        Coleta coleta = findByIdOrThrow(coletaWriteDTO.getId());
+
+        coleta.initBy(coletaWriteDTO);
+
+        if (coletaWriteDTO.getProjeto_id() != coleta.getProjeto().getId()) {
+            throw new EntityInvalidException("Não é possível trocar o projeto da coleta");
+        }
+        if (coletaWriteDTO.getCampo_id() != coleta.getCampo().getId()) {
+            throw new EntityInvalidException("Não é possível trocar o Campo da coleta");
+        }
+
+        Usuario responsavel = usuarioService.findByIdOrThrow(coletaWriteDTO.getResponsavel_id());
+
+        if (responsavel.getId() != coleta.getResponsavel().getId()) {
+            throw new EntityInvalidException("Não é possível trocar o responsável da coleta");
+        }
+
+        Familia familia;
+        Genero genero;
+        Especie especie;
+
+        if (coletaWriteDTO.getFamilia_id() != null) {
+            familia = familiaService.findByIdOrThrow(coletaWriteDTO.getFamilia_id());
+        } else {
+            familia = null;
+        }
+
+        if (familia != null && coletaWriteDTO.getGenero_id() != null) {
+            genero = generoService.findByIdOrThrow(coletaWriteDTO.getGenero_id());
+
+            if (genero.getFamilia().getId() != familia.getId()) {
+                throw new EntityInvalidException("Esse Gênero não pertence a essa família");
+            }
+
+        } else {
+            genero = null;
+        }
+
+        if (genero != null && coletaWriteDTO.getEspecie_id() != null) {
+
+            especie = especieService.findByIdOrThrow(coletaWriteDTO.getEspecie_id());
+
+            if (especie.getGenero().getId() != genero.getId()) {
+                throw new EntityInvalidException("Essa Espécie não pertence a esse Gênero");
+            }
+
+        } else {
+            especie = null;
+        }
+
+        coleta.setFamilia(familia);
+        coleta.setGenero(genero);
+        coleta.setEspecie(especie);
+
+        coleta.updateDateNow();
+
+        return coleta;
     }
 
 }

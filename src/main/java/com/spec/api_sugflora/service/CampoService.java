@@ -1,5 +1,6 @@
 package com.spec.api_sugflora.service;
 
+import java.lang.classfile.ClassFile.Option;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
@@ -12,6 +13,7 @@ import org.springframework.stereotype.Service;
 import com.spec.api_sugflora.dto.CampoDTO;
 import com.spec.api_sugflora.dto.CampoWriteDTO;
 import com.spec.api_sugflora.model.Campo;
+import com.spec.api_sugflora.model.Projeto;
 import com.spec.api_sugflora.repository.CampoRepository;
 import com.spec.speedspring.core.exception.EntityAlreadExistsException;
 import com.spec.speedspring.core.exception.EntityAlreadyDeletedException;
@@ -27,9 +29,11 @@ public class CampoService {
     @Autowired
     CampoRepository campoRepository;
 
-    public Campo findById(Integer id) {
-        Campo campo = campoRepository.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException("Campo não encontrado com ID fornecido"));
+    @Autowired
+    ProjetoService projetoService;
+
+    public Optional<Campo> findById(Integer id) {
+        Optional<Campo> campo = campoRepository.findById(id);
         return campo;
     }
 
@@ -52,6 +56,8 @@ public class CampoService {
         if (CampoAlreadExists(campo)) {
             throw new EntityExistsException("Já existe um campo com este nome");
         }
+
+        System.err.println(campo);
 
         Campo campoSaved = campoRepository.save(campo);
         return campoSaved;
@@ -93,7 +99,7 @@ public class CampoService {
     @Transactional
     public CampoDTO update(CampoWriteDTO campoWriteDTO) {
 
-        Campo campo = findById(campoWriteDTO.getId());
+        Campo campo = findByIdOrThrow(campoWriteDTO.getId());
 
         Campo campoExists = findByNomeAndResponsavelIdAndProjetoId(campoWriteDTO.getNome(),
                 campoWriteDTO.getUsuario_responsavel_uuid(), campoWriteDTO.getProjeto_id());
@@ -112,7 +118,7 @@ public class CampoService {
 
     @Transactional
     public CampoDTO delete(Integer id) {
-        Campo campo = findById(id);
+        Campo campo = findByIdOrThrow(id);
 
         if (campo.isDeleted()) {
             throw new EntityAlreadyDeletedException("Campo já está deletado");
@@ -126,6 +132,18 @@ public class CampoService {
         campo.setUpdatedAt(LocalDateTime.now());
 
         return beckup;
+    }
+
+    public List<Campo> findAllByProjetoId(Integer id) {
+        projetoService.findByIdOrThrow(id);
+        return campoRepository.findAllByProjetoId(id);
+    }
+
+    public Campo findByIdOrThrow(Integer campo_id) {
+
+        return findById(campo_id).orElseThrow(
+                () -> new EntityNotFoundException("Campo não encontrado"));
+
     }
 
 }

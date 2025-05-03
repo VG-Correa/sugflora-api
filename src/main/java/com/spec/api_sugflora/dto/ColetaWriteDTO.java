@@ -7,6 +7,7 @@ import lombok.Data;
 
 @Data
 public class ColetaWriteDTO {
+    private Integer id;
 
     private Integer projeto_id;
     private Integer campo_id;

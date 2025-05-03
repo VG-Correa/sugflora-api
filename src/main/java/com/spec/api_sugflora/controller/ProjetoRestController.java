@@ -66,11 +66,7 @@ public class ProjetoRestController extends GenericRestController {
 
             System.err.println(projetoWriteDTO);
             Projeto projeto = new Projeto(projetoWriteDTO);
-            Usuario usuarioDono = usuarioService.findById(projetoWriteDTO.getUsuario_dono_uuid());
-
-            if (usuarioDono == null) {
-                throw new EntityNotFoundException("Usuário dono do projeto não localizado");
-            }
+            Usuario usuarioDono = usuarioService.findByIdOrThrow(projetoWriteDTO.getUsuario_dono_uuid());
 
             projeto.setDono(usuarioDono);
 

@@ -5,9 +5,11 @@ import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -61,29 +63,29 @@ public class ColetaRestController extends GenericRestController {
         try {
             Coleta coleta = new Coleta();
 
-            Projeto projeto = projetoService.findById(coletaWriteDTO.getProjeto_id());
+            Projeto projeto = projetoService.findByIdOrThrow(coletaWriteDTO.getProjeto_id());
             coleta.setProjeto(projeto);
 
-            Campo campo = campoService.findById(coletaWriteDTO.getCampo_id());
+            Campo campo = campoService.findByIdOrThrow(coletaWriteDTO.getCampo_id());
             coleta.setCampo(campo);
 
-            Usuario responsavel = usuarioService.findById(coletaWriteDTO.getResponsavel_id());
+            Usuario responsavel = usuarioService.findByIdOrThrow(coletaWriteDTO.getResponsavel_id());
             coleta.setResponsavel(responsavel);
 
             coleta.setData_coleta(coletaWriteDTO.getData_coleta());
 
             if (coletaWriteDTO.getFamilia_id() != null) {
-                Familia familia = familiaService.findById(coletaWriteDTO.getFamilia_id()).get();
+                Familia familia = familiaService.findByIdOrThrow(coletaWriteDTO.getFamilia_id());
                 coleta.setFamilia(familia);
             }
 
             if (coletaWriteDTO.getGenero_id() != null) {
-                Genero genero = generoService.findById(coletaWriteDTO.getGenero_id()).get();
+                Genero genero = generoService.findByIdOrThrow(coletaWriteDTO.getGenero_id());
                 coleta.setGenero(genero);
             }
 
             if (coletaWriteDTO.getEspecie_id() != null) {
-                Especie especie = especieService.findById(coletaWriteDTO.getEspecie_id()).get();
+                Especie especie = especieService.findByIdOrThrow(coletaWriteDTO.getEspecie_id());
                 coleta.setEspecie(especie);
             }
 
@@ -91,7 +93,7 @@ public class ColetaRestController extends GenericRestController {
 
             Coleta coletaSaved = coletaService.save(coleta);
 
-            return getResponseCreated("Coleta criada com sucesso", coletaSaved);
+            return getResponseCreated("Coleta criada com sucesso", coletaSaved.toDTO());
 
         } catch (Exception e) {
             return getResponseException(e);
@@ -109,6 +111,34 @@ public class ColetaRestController extends GenericRestController {
             return getResponseException(e);
         }
 
+    }
+
+    @PutMapping("")
+    public ResponseEntity<GenericResponse> update(@RequestBody ColetaWriteDTO coletaWriteDTO) {
+
+        try {
+
+            Coleta backup = coletaService.findByIdOrThrow(coletaWriteDTO.getId());
+            Coleta updated = coletaService.update(coletaWriteDTO);
+
+            return getResponseOK("Coleta atualizada com sucesso", updated.toDTO(), Map.of("backup", backup.toDTO()));
+
+        } catch (Exception e) {
+            return getResponseException(e);
+        }
+
+    }
+
+    @DeleteMapping("{id}")
+    public ResponseEntity<GenericResponse> delete(@PathVariable Integer id) {
+        try {
+
+            return getResponseOK(null);
+            // TODO: Continuar aqui
+
+        } catch (Exception e) {
+            return getResponseException(e);
+        }
     }
 
 }

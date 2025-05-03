@@ -20,4 +20,7 @@ public interface CampoRepository extends JpaRepository<Campo, Integer> {
 
     Optional<Campo> findByNomeAndResponsavelIdAndProjetoId(String nome, UUID responsavel_id, Integer projeto_id);
 
+    @Query(value = "SELECT campo FROM Campo campo WHERE campo.projeto.id = :id_projeto")
+    List<Campo> findAllByProjetoId(Integer id_projeto);
+
 }

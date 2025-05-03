@@ -50,13 +50,9 @@ public class CampoRestController extends GenericRestController {
 
             Campo campo = new Campo(campoWriteDTO);
 
-            Usuario responsavel = usuarioService.findById(campoWriteDTO.getUsuario_responsavel_uuid());
+            Usuario responsavel = usuarioService.findByIdOrThrow(campoWriteDTO.getUsuario_responsavel_uuid());
+
             campo.setResponsavel(responsavel);
-
-            if (responsavel == null) {
-                throw new EntityNotFoundException("Responsável pelo campo não encontrado");
-            }
-
             Projeto projeto = projetoService.findById(campoWriteDTO.getProjeto_id());
             campo.setProjeto(projeto);
 
@@ -79,10 +75,7 @@ public class CampoRestController extends GenericRestController {
     @GetMapping("usuario/{id_usuario}")
     public ResponseEntity<GenericResponse> getAllByResponsavelId(@PathVariable UUID id_usuario) {
         try {
-            Usuario usuario = usuarioService.findById(id_usuario);
-            if (usuario == null) {
-                throw new EntityNotFoundException("Não foi encontrado um usuário com este id");
-            }
+            Usuario usuario = usuarioService.findByIdOrThrow(id_usuario);
 
             List<Campo> campos = campoService.findAllByUsuarioId(id_usuario);
             List<CampoDTO> camposDtos = campos.stream().map(campo -> campo.toDTO()).toList();
@@ -90,6 +83,20 @@ public class CampoRestController extends GenericRestController {
             return getResponseOK(
                     null,
                     camposDtos);
+
+        } catch (Exception e) {
+            return getResponseException(e);
+        }
+
+    }
+
+    @GetMapping("projeto/{id_projeto}")
+    public ResponseEntity<GenericResponse> getAllByProjetoId(@PathVariable Integer id_projeto) {
+
+        try {
+
+            List<Campo> campos = campoService.findAllByProjetoId(id_projeto);
+            return getResponseOK(null, toDTO(campos), Map.of("total_items", campos.size()));
 
         } catch (Exception e) {
             return getResponseException(e);

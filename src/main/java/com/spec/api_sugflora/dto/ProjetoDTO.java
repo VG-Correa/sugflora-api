@@ -2,6 +2,7 @@ package com.spec.api_sugflora.dto;
 
 import org.springframework.web.multipart.MultipartFile;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.spec.api_sugflora.model.Projeto;
 import com.spec.speedspring.core.dto.DTO;
 
@@ -17,6 +18,7 @@ import lombok.NoArgsConstructor;
 public class ProjetoDTO extends IntDomainDTO implements DTO<Projeto> {
     private String nome;
     private String descricao;
+    @JsonIgnore
     private UsuarioDTO dono;
     private boolean isPublic;
 

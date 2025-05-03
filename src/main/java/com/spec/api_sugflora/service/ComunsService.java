@@ -27,7 +27,7 @@ public class ComunsService {
     }
 
     public boolean UUID_USUARIO_EXISTS(UUID uuid) {
-        Usuario usuario = usuarioService.findById(uuid);
+        Usuario usuario = usuarioService.findById(uuid).get();
         return usuario != null;
     }
 

@@ -23,7 +23,6 @@ import com.spec.speedspring.core.controller.GenericRestController;
 import com.spec.speedspring.core.responses.GenericResponse;
 import org.springframework.web.bind.annotation.PutMapping;
 
-
 @RestController
 @RequestMapping("api/especie")
 public class EspecieRestController extends GenericRestController {
@@ -79,7 +78,7 @@ public class EspecieRestController extends GenericRestController {
 
     @PutMapping("")
     public ResponseEntity<GenericResponse> update(@RequestBody EspecieWriteDTO especieWriteDTO) {
-    
+
         try {
             EspecieDTO backup = especieService.findByIdOrThrow(especieWriteDTO.getId()).toDTO();
             Especie updated = especieService.update(especieWriteDTO);
@@ -89,7 +88,7 @@ public class EspecieRestController extends GenericRestController {
         } catch (Exception e) {
             return getResponseException(e);
         }
-        
+
     }
 
     @DeleteMapping("{id}")
@@ -103,3 +102,8 @@ public class EspecieRestController extends GenericRestController {
     }
 
 }
+
+
+        
+
+    
