@@ -27,6 +27,9 @@ public abstract class UuidDomain {
     @Column(nullable = true, unique = false)
     private Integer createdById;
 
+    @Column(nullable = false, unique = false)
+    private Boolean deleted = false;
+
     @Column(nullable = true, unique = false)
     private Integer deletedById;
 
@@ -49,5 +52,9 @@ public abstract class UuidDomain {
         this.deletedAt = dto.getDeletedAt();
         this.updatedAt = dto.getUpdatedAt();
         this.updatedById = dto.getUpdatedById();
+    }
+
+    public void updateDateNow() {
+        setUpdatedAt(LocalDateTime.now());
     }
 }

@@ -59,6 +59,5 @@ public abstract class IntDomain {
 
     public void updateDateNow() {
         setUpdatedAt(LocalDateTime.now());
-
     }
 }

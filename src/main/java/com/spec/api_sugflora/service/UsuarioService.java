@@ -1,27 +1,28 @@
 package com.spec.api_sugflora.service;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import com.spec.api_sugflora.dto.UsuarioDTO;
+import com.spec.api_sugflora.dto.UsuarioWriteDTO;
 import com.spec.api_sugflora.model.Usuario;
 import com.spec.api_sugflora.repository.UsuarioRepository;
-import com.spec.api_sugflora.security.SecurityConfiguration;
 import com.spec.speedspring.core.exception.EntityAlreadExistsException;
 import com.spec.speedspring.core.exception.EntityInvalidException;
 import com.spec.speedspring.core.exception.EntityNotFoundException;
+
+import jakarta.transaction.Transactional;
 
 @Service
 public class UsuarioService {
     @Autowired
     UsuarioRepository usuarioRepository;
-
-    @Autowired
-    SecurityConfiguration securityConfiguration;
 
     public Usuario findByEmail(String email) {
         Usuario usuario = usuarioRepository.findByEmail(email).orElse(null);
@@ -64,22 +65,22 @@ public class UsuarioService {
     }
 
     public void isValid(Usuario usuario) {
-        if (usuario.getCpf() == null) {
+        if (usuario.getCpf() == null || usuario.getCpf().isEmpty()) {
             throw new EntityInvalidException("CPF não pode ser nulo");
-        } else if (usuario.getRg() == null) {
+        } else if (usuario.getRg() == null || usuario.getRg().isEmpty()) {
             throw new EntityInvalidException("RG não pode ser nulo");
-        } else if (usuario.getEmail() == null) {
+        } else if (usuario.getEmail() == null || usuario.getEmail().isEmpty()) {
             throw new EntityInvalidException("E-mail não pode ser nulo");
-        } else if (usuario.getUsername() == null) {
+        } else if (usuario.getUsername() == null || usuario.getUsername().isEmpty()) {
             throw new EntityInvalidException("Username não pode ser nulo");
-        } else if (usuario.getSenha() == null) {
+        } else if (usuario.getSenha() == null || usuario.getSenha().isEmpty()) {
             throw new EntityInvalidException("Senha não pode ser nula");
-        } else if (usuario.getRole() == null) {
+        } else if (usuario.getRole() == null || usuario.getRole().isEmpty()) {
             throw new EntityInvalidException("Role não pode ser nula");
         }
     }
 
-    public Usuario save(Usuario user) {
+    public Usuario save(Usuario user, PasswordEncoder passwordEncoder) {
         isValid(user);
         if (userExistsByEmail(user.getEmail())) {
             throw new EntityAlreadExistsException("Este e-mail já está cadastrado");
@@ -91,7 +92,7 @@ public class UsuarioService {
             throw new EntityAlreadExistsException("Já existe um usuário com este RG");
         }
 
-        user.setSenha(securityConfiguration.passwordEncoder().encode(user.getSenha()));
+        user.setSenha(passwordEncoder.encode(user.getSenha()));
 
         Usuario novoUsuario = usuarioRepository.save(user);
         return novoUsuario;
@@ -121,6 +122,31 @@ public class UsuarioService {
         Usuario usuario = findById(responsavel_id).orElseThrow(
                 () -> new EntityNotFoundException("Usuário não encontrado"));
         return usuario;
+    }
+
+    @Transactional
+    public Usuario update(UsuarioWriteDTO usuarioWriteDTO) {
+        
+        Usuario usuario = findByIdOrThrow(usuarioWriteDTO.getUuid());
+        usuarioWriteDTO.setSenha(usuario.getSenha());
+        
+        usuario.initBy(usuarioWriteDTO);
+
+        usuario.updateDateNow();
+
+        isValid(usuario);
+        return usuario;
+    }
+
+    @Transactional
+    public void deleteById(UUID uuid) {
+
+        Usuario usuario = findByIdOrThrow(uuid);
+
+        usuario.setDeletedAt(LocalDateTime.now());
+        usuario.setDeletedById(null);
+        usuario.setDeleted(true);
+        usuario.updateDateNow();
     }
 
 }

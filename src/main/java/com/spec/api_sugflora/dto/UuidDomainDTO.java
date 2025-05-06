@@ -14,6 +14,7 @@ public abstract class UuidDomainDTO {
     @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm")
     private LocalDateTime createdAt;
     private Integer createdById;
+    private Boolean deleted = false;
     private Integer deletedById;
     @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm")
     private LocalDateTime deletedAt;
