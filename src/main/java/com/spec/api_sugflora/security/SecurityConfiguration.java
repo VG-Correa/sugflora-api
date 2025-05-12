@@ -26,10 +26,16 @@ public class SecurityConfiguration {
         return http
                 .csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(authorize -> authorize
-                        .requestMatchers("/api/**").authenticated()
-                        .requestMatchers("/api/auth/login").permitAll()
-                        .anyRequest().authenticated()
-                )
+                        .requestMatchers(
+                                "/api/auth/login",
+                                "/swagger-ui/**",
+                                "/v3/api-docs/**",
+                                "/v3/api-docs.yaml",
+                                "/swagger-resources/**",
+                                "/webjars/**")
+                        .permitAll()
+
+                        .anyRequest().authenticated())
 
                 .addFilterBefore(new JwtAuthFilter(), UsernamePasswordAuthenticationFilter.class)
 
@@ -47,5 +53,4 @@ public class SecurityConfiguration {
         return authenticationConfiguration.getAuthenticationManager();
     }
 
-   
 }

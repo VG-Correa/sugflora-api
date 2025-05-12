@@ -40,7 +40,7 @@ public class AuthController {
             SecurityContextHolder.getContext().setAuthentication(authentication);
 
             // Gera o token JWT
-            String token = jwtUtil.generateToken((UserDetails) authentication.getPrincipal());
+            String token = jwtUtil.generationToken((UserDetails) authentication.getPrincipal());
 
             // Retorna o token na resposta
             return ResponseEntity.ok().body(Map.of("token", token));
