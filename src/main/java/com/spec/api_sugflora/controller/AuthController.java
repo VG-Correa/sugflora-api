@@ -2,6 +2,7 @@ package com.spec.api_sugflora.controller;
 
 import java.util.Map;
 
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -45,7 +46,8 @@ public class AuthController {
             // Retorna o token na resposta
             return ResponseEntity.ok().body(Map.of("token", token));
         } catch (Exception exception) {
-            return ResponseEntity.badRequest().body(Map.of("erro", "Credenciais inválidas"));
+            System.out.println(exception.getMessage());
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(Map.of("erro", "Credenciais inválidas"));
         }
     }
 

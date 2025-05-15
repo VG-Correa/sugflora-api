@@ -69,7 +69,7 @@ public class Usuario extends UuidDomain implements DTOConvertable<UsuarioWriteDT
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return List.of(() -> role);
+        return List.of(() -> "ROLE_" + role.replace("ROLE_", ""));
     }
 
     @Override

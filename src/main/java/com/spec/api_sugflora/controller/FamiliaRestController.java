@@ -74,6 +74,7 @@ public class FamiliaRestController extends GenericRestController {
                     Map.of("total_items", familiasDTOs.size()));
 
         } catch (Exception e) {
+            System.err.println(e.getMessage());
             return getResponseException(e);
         }
     }
