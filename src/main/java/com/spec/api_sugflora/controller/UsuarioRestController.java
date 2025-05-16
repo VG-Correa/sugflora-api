@@ -108,5 +108,17 @@ public class UsuarioRestController extends GenericRestController {
 
     }
 
+    @GetMapping("username/{username}")
+    public ResponseEntity<GenericResponse> getByUserName(@PathVariable String username) {
+        try {
+            
+            Usuario usuario = usuarioService.findByUserNameOrThrow(username);
+
+            return getResponseOK(null, usuario.toDTO());
+
+        } catch (Exception e) {
+            return getResponseException(e);
+        }
+    }
 
 }

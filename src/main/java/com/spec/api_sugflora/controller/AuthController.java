@@ -32,6 +32,9 @@ public class AuthController {
 
     @PostMapping("login")
     public ResponseEntity<Map<String, Object>> login(@RequestBody LoginRequest loginRequest) {
+        System.out.println("Iniciando login");
+        System.out.println(loginRequest);
+        
         try {
             // Autentica o usuário
             Authentication authentication = authenticationManager.authenticate(

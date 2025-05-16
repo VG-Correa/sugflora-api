@@ -34,8 +34,13 @@ public class UsuarioService {
         return exist;
     }
 
-    public Usuario findByUsername(String username) {
-        Usuario usuario = usuarioRepository.findByUsername(username).orElse(null);
+    public Optional<Usuario> findByUsername(String username) {
+        Optional<Usuario> usuario = usuarioRepository.findByUsername(username);
+        return usuario;
+    }
+
+    public Usuario findByUserNameOrThrow(String username) {
+        Usuario usuario = findByUsername(username).orElseThrow(() -> new EntityNotFoundException("Usuário não localizado"));
         return usuario;
     }
 
