@@ -13,7 +13,9 @@ import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.stereotype.Service;
 
+import com.spec.api_sugflora.configuration.InitUsers;
 import com.spec.api_sugflora.service.CustomUserDetailsService;
+import com.spec.api_sugflora.service.UsuarioService;
 
 @Configuration
 public class SecurityConfiguration {
@@ -22,28 +24,34 @@ public class SecurityConfiguration {
     private CustomUserDetailsService userDetailsService;
 
     @Autowired
+    private UsuarioService usuarioService;
+
+    @Autowired
     private JwtUtil jwtUtil;
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-        return http
-                .csrf(csrf -> csrf.disable())
-                .authorizeHttpRequests(authorize -> authorize
-                        .requestMatchers(
-                                "/api/auth/login",
-                                "/api/usuario",
-                                "/swagger-ui/**",
-                                "/v3/api-docs/**",
-                                "/v3/api-docs.yaml",
-                                "/swagger-resources/**",
-                                "/webjars/**")
-                        .permitAll()
+        http
+            .csrf(csrf -> csrf.disable())
+            .authorizeHttpRequests(authorize -> authorize
+                    .requestMatchers(
+                            "/api/auth/login",
+                            "/api/usuario",
+                            "/swagger-ui/**",
+                            "/v3/api-docs/**",
+                            "/v3/api-docs.yaml",
+                            "/swagger-resources/**",
+                            "/webjars/**")
+                    .permitAll()
 
-                        .anyRequest().authenticated())
+                    .anyRequest().authenticated())
 
-                .addFilterBefore(new JwtAuthFilter(jwtUtil, userDetailsService), UsernamePasswordAuthenticationFilter.class)
+            .addFilterBefore(new JwtAuthFilter(jwtUtil, userDetailsService), UsernamePasswordAuthenticationFilter.class);
 
-                .build();
+        InitUsers initUsers = new InitUsers(usuarioService);
+        initUsers.run(passwordEncoder());
+
+        return http.build();
     }
 
     @Bean

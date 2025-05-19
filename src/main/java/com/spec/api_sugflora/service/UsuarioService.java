@@ -45,7 +45,7 @@ public class UsuarioService {
     }
 
     public boolean userExistsByUsername(String username) {
-        boolean exist = findByUsername(username) != null ? true : false;
+        boolean exist = findByUsername(username).isEmpty() ? false : true;
         return exist;
     }
 
