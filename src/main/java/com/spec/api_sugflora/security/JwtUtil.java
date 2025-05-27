@@ -26,7 +26,7 @@ import javax.crypto.spec.SecretKeySpec;
 public class JwtUtil {
 
     private static final String SECRET_KEY = "minha-chave-secreta-muito-forte-e-grande-para-jwt-1234567890";
-    private static final long MINUTES = 10;
+    private static final long MINUTES = 30;
     private static final long EXPIRATION_TIME = MINUTES * 60000;
 
     private Key key(){

@@ -1,5 +1,7 @@
 package com.spec.api_sugflora.dto;
 
+import java.time.LocalDateTime;
+
 import org.springframework.web.multipart.MultipartFile;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -21,6 +23,8 @@ public class ProjetoDTO extends IntDomainDTO implements DTO<Projeto> {
     @JsonIgnore
     private UsuarioDTO dono;
     private boolean isPublic;
+    private LocalDateTime inicio;
+    private LocalDateTime termino;
 
     public ProjetoDTO(Projeto projeto) {
         this.initBy(projeto);
