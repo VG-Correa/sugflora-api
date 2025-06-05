@@ -20,7 +20,6 @@ import com.spec.speedspring.core.exception.EntityAlreadyDeletedException;
 import com.spec.speedspring.core.exception.EntityInvalidException;
 import com.spec.speedspring.core.exception.EntityNotFoundException;
 
-import jakarta.persistence.EntityExistsException;
 import jakarta.transaction.Transactional;
 
 @Service
@@ -49,12 +48,12 @@ public class CampoService {
     }
 
     public boolean CampoAlreadExists(Campo campo) {
-        return findByNomeAndResponsavelId(campo.getNome(), campo.getResponsavel().getId()) != null;
+        return findByNomeAndResponsavelIdAndProjetoId(campo.getNome(), campo.getResponsavel().getId(), campo.getProjeto().getId()) != null;
     }
 
     public Campo save(Campo campo) {
         if (CampoAlreadExists(campo)) {
-            throw new EntityExistsException("Já existe um campo com este nome");
+            throw new EntityAlreadExistsException("Já existe um campo com este nome para este projeto");
         }
 
         System.err.println(campo);
