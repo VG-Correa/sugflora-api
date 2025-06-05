@@ -2,6 +2,7 @@ package com.spec.api_sugflora.dto;
 
 import java.time.LocalDate;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.spec.api_sugflora.model.Coleta;
 import com.spec.speedspring.core.dto.DTO;
 
@@ -15,6 +16,8 @@ public class ColetaDTO extends IntDomainDTO implements DTO<Coleta> {
     private ProjetoDTO projeto;
     private CampoDTO campo;
     private UsuarioDTO responsavel;
+    
+    @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss.SSS")
     private LocalDate data_coleta;
     private FamiliaDTO familia;
     private GeneroDTO genero;

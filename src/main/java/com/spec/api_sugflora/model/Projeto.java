@@ -1,5 +1,7 @@
 package com.spec.api_sugflora.model;
 
+import java.time.LocalDateTime;
+
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.spec.api_sugflora.dto.ProjetoDTO;
 import com.spec.api_sugflora.dto.ProjetoWriteDTO;
@@ -36,6 +38,12 @@ public class Projeto extends IntDomain implements DTOConvertable<ProjetoWriteDTO
 
     @Column(nullable = true, unique = false)
     private byte[] imagem;
+
+    @Column(nullable = false, unique = false)
+    private LocalDateTime inicio;
+    
+    @Column(nullable = true, unique = false)
+    private LocalDateTime termino;
 
     public Projeto(ProjetoWriteDTO dto) {
         this.initBy(dto);

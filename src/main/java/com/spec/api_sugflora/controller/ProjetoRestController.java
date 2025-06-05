@@ -121,8 +121,12 @@ public class ProjetoRestController extends GenericRestController {
                 throw new EntityExistsException("Usuário dono do projeto não encontrado");
             }
 
+            System.out.println("Atualizando PROJETO");
+            System.out.println("Usuario id do banco: " + projeto.getDono().getId());
+            System.out.println("Usuario id do DTO: " + projetoWriteDTO.getUsuario_dono_uuid());
+
             if (projetoWriteDTO.getUsuario_dono_uuid() != null
-                    && projeto.getDono().getId() != projetoWriteDTO.getUsuario_dono_uuid()) {
+                    && !projeto.getDono().getId().equals(projetoWriteDTO.getUsuario_dono_uuid())) {
                 return getResponseInvalidEntity(new EntityInvalidException(
                         "Não é possível atualizar um projeto para um usuário que não é dono"));
 
