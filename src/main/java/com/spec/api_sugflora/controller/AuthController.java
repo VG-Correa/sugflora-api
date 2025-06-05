@@ -12,14 +12,18 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import com.spec.api_sugflora.dto.LoginRequest;
+import com.spec.api_sugflora.model.Usuario;
+import com.spec.api_sugflora.model.responses.tokenResponse;
 import com.spec.api_sugflora.security.JwtUtil;
+import com.spec.speedspring.core.controller.GenericRestController;
+import com.spec.speedspring.core.responses.GenericResponse;
 
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 
 @RestController
 @RequestMapping("api/auth")
-public class AuthController {
+public class AuthController extends GenericRestController {
 
     private final AuthenticationManager authenticationManager;
     private final JwtUtil jwtUtil;
@@ -31,10 +35,10 @@ public class AuthController {
     }
 
     @PostMapping("login")
-    public ResponseEntity<Map<String, Object>> login(@RequestBody LoginRequest loginRequest) {
+    public ResponseEntity<GenericResponse> login(@RequestBody LoginRequest loginRequest) {
         System.out.println("Iniciando login");
         System.out.println(loginRequest);
-        
+
         try {
             // Autentica o usuário
             Authentication authentication = authenticationManager.authenticate(
@@ -45,12 +49,19 @@ public class AuthController {
 
             // Gera o token JWT
             String token = jwtUtil.generationToken((UserDetails) authentication.getPrincipal());
+            Usuario usuario = (Usuario) authentication.getPrincipal();
+
+            tokenResponse tokenResponse = new tokenResponse();
+            tokenResponse.setToken(token);
+            tokenResponse.setUsuario(usuario.toDTO());
+
+            System.out.println(tokenResponse);
 
             // Retorna o token na resposta
-            return ResponseEntity.ok().body(Map.of("token", token));
+            return getResponseOK(null, tokenResponse);
         } catch (Exception exception) {
             System.out.println(exception.getMessage());
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(Map.of("erro", "Credenciais inválidas"));
+            return getResponseException(exception);
         }
     }
 

@@ -26,29 +26,29 @@ import javax.crypto.spec.SecretKeySpec;
 public class JwtUtil {
 
     private static final String SECRET_KEY = "minha-chave-secreta-muito-forte-e-grande-para-jwt-1234567890";
-    private static final long EXPIRATION_TIME = 60000;
+    private static final long EXPIRATION_TIME = 360000;
 
-    private Key key(){
+    private Key key() {
         return Keys.hmacShaKeyFor(SECRET_KEY.getBytes());
     }
 
     public String generationToken(UserDetails userDetails) {
-        
+
         return Jwts.builder()
-            .subject(userDetails.getUsername())
-            .issuedAt(new Date())
-            .expiration(new Date(System.currentTimeMillis() + EXPIRATION_TIME))
-            .signWith(key())
-        
-        .compact();
+                .subject(userDetails.getUsername())
+                .issuedAt(new Date())
+                .expiration(new Date(System.currentTimeMillis() + EXPIRATION_TIME))
+                .signWith(key())
+
+                .compact();
     }
 
     public boolean validateToken(String token) {
         try {
             Jwts.parser()
-                .verifyWith((SecretKey) key())
-                .build()
-                .parse(token);
+                    .verifyWith((SecretKey) key())
+                    .build()
+                    .parse(token);
             return true;
 
         } catch (JwtException | IllegalArgumentException e) {
@@ -66,5 +66,5 @@ public class JwtUtil {
                 .getSubject();
 
     }
-    
+
 }
