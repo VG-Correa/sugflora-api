@@ -12,7 +12,7 @@ import com.spec.api_sugflora.model.Usuario;
 import com.spec.api_sugflora.service.UsuarioService;
 
 @Service
-public class InitUsers{
+public class InitUsers {
 
     private final UsuarioService usuarioService;
 
@@ -25,8 +25,8 @@ public class InitUsers{
         List<UsuarioWriteDTO> usuarios = new ArrayList<>();
 
         UsuarioWriteDTO adm = new UsuarioWriteDTO();
-        adm.setUsername("Victor-ADM");
-        adm.setEmail("victor@adm.com");
+        adm.setUsername("ADM");
+        adm.setEmail("adm@adm.com");
         adm.setCpf("000.000.000-00");
         adm.setRg("00.000.000-0");
         adm.setEndereco(null);
@@ -39,8 +39,6 @@ public class InitUsers{
 
         Save(usuarios, passwordEncoder);
 
-        
-
     }
 
     private void Save(List<UsuarioWriteDTO> usuarios, PasswordEncoder passwordEncoder) {
@@ -49,18 +47,17 @@ public class InitUsers{
             try {
                 Usuario usuarioModel = new Usuario(usuario);
                 Usuario usuarioSaved = usuarioService.save(usuarioModel, passwordEncoder);
-    
+
                 if (usuarioSaved != null) {
                     System.err.println("Usuário" + usuario.getUsername() + " cadastrado com sucesso");
                 } else {
                     System.err.println("Erro ao cadastrar usuario: " + usuario.getUsername());
                 }
-                
+
             } catch (Exception e) {
                 System.err.println("Erro ao cadastrar usuario");
                 System.err.println(e.getMessage());
             }
-            
 
         });
     }
