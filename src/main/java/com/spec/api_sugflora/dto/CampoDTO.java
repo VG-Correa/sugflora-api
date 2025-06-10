@@ -2,6 +2,8 @@ package com.spec.api_sugflora.dto;
 
 import com.spec.api_sugflora.model.Campo;
 import com.spec.speedspring.core.dto.DTO;
+import com.fasterxml.jackson.annotation.JsonFormat;
+import java.time.LocalDate;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -23,6 +25,9 @@ public class CampoDTO extends IntDomainDTO implements DTO<Campo> {
     private String estado;
     private String pais;
     private String cep;
+    
+    @JsonFormat(pattern = "yyyy-MM-dd")
+    private LocalDate data_inicio;
 
     public CampoDTO(Campo campo) {
         initBy(campo);

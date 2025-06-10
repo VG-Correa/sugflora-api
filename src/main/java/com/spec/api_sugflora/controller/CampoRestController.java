@@ -45,17 +45,22 @@ public class CampoRestController extends GenericRestController {
 
     @PostMapping("")
     public ResponseEntity<GenericResponse> create(@RequestBody CampoWriteDTO campoWriteDTO) {
-
         try {
+            // Validar o DTO antes de prosseguir
+            campoService.isValid(campoWriteDTO);
 
+            // Criar o campo
             Campo campo = new Campo(campoWriteDTO);
 
+            // Buscar e validar o responsável
             Usuario responsavel = usuarioService.findByIdOrThrow(campoWriteDTO.getUsuario_responsavel_uuid());
-
             campo.setResponsavel(responsavel);
-            Projeto projeto = projetoService.findById(campoWriteDTO.getProjeto_id());
+
+            // Buscar e validar o projeto
+            Projeto projeto = projetoService.findByIdOrThrow(campoWriteDTO.getProjeto_id());
             campo.setProjeto(projeto);
 
+            // Salvar o campo
             Campo saved = campoService.save(campo);
 
             if (saved == null) {
@@ -69,7 +74,6 @@ public class CampoRestController extends GenericRestController {
         } catch (Exception e) {
             return getResponseException(e);
         }
-
     }
 
     @GetMapping("usuario/{id_usuario}")
