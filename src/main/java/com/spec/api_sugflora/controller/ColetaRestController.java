@@ -61,15 +61,17 @@ public class ColetaRestController extends GenericRestController {
     @PostMapping("")
     public ResponseEntity<GenericResponse> create(@RequestBody ColetaWriteDTO coletaWriteDTO) {
         try {
+            System.out.println(coletaWriteDTO);
             Coleta coleta = new Coleta();
-
-            Projeto projeto = projetoService.findByIdOrThrow(coletaWriteDTO.getProjeto_id());
-            coleta.setProjeto(projeto);
-
+            
             Campo campo = campoService.findByIdOrThrow(coletaWriteDTO.getCampo_id());
             coleta.setCampo(campo);
 
-            Usuario responsavel = usuarioService.findByIdOrThrow(coletaWriteDTO.getResponsavel_id());
+            Projeto projeto = campo.getProjeto();
+            coleta.setProjeto(projeto);
+
+
+            Usuario responsavel = projeto.getDono();
             coleta.setResponsavel(responsavel);
 
             coleta.setData_coleta(coletaWriteDTO.getData_coleta());
@@ -89,7 +91,7 @@ public class ColetaRestController extends GenericRestController {
                 coleta.setEspecie(especie);
             }
 
-            coleta.setObservacao(coletaWriteDTO.getObservacao());
+            // coleta.setObservacao(coletaWriteDTO.getObservacao());
 
             Coleta coletaSaved = coletaService.save(coleta);
 

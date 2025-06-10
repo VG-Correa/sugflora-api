@@ -79,17 +79,9 @@ public class ColetaService {
 
         coleta.initBy(coletaWriteDTO);
 
-        if (coletaWriteDTO.getProjeto_id() != coleta.getProjeto().getId()) {
-            throw new EntityInvalidException("Não é possível trocar o projeto da coleta");
-        }
+        
         if (coletaWriteDTO.getCampo_id() != coleta.getCampo().getId()) {
             throw new EntityInvalidException("Não é possível trocar o Campo da coleta");
-        }
-
-        Usuario responsavel = usuarioService.findByIdOrThrow(coletaWriteDTO.getResponsavel_id());
-
-        if (responsavel.getId() != coleta.getResponsavel().getId()) {
-            throw new EntityInvalidException("Não é possível trocar o responsável da coleta");
         }
 
         Familia familia;

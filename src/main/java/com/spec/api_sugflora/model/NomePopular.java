@@ -6,12 +6,14 @@ import com.spec.speedspring.core.dtoConvertable.DTOConvertable;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
 @Entity
 @Data
 @EqualsAndHashCode(callSuper = false)
+@AllArgsConstructor
 public class NomePopular extends IntDomain implements DTOConvertable<NomePopularWriteDTO, NomePopularDTO> {
 
     @Column(nullable = false, unique = false)
