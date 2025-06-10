@@ -43,7 +43,7 @@ public class Projeto extends IntDomain implements DTOConvertable<ProjetoWriteDTO
     private LocalDateTime inicio;
     
     @Column(nullable = true, unique = false)
-    private LocalDateTime termino;
+    private LocalDateTime previsaoConclusao;
 
     public Projeto(ProjetoWriteDTO dto) {
         this.initBy(dto);

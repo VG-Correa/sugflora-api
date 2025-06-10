@@ -22,9 +22,8 @@ public class ProjetoDTO extends IntDomainDTO implements DTO<Projeto> {
     private String descricao;
     @JsonIgnore
     private UsuarioDTO dono;
-    private boolean isPublic;
     private LocalDateTime inicio;
-    private LocalDateTime termino;
+    private LocalDateTime previsaoConclusao;
 
     public ProjetoDTO(Projeto projeto) {
         this.initBy(projeto);
