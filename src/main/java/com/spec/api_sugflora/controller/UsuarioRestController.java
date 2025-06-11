@@ -85,7 +85,7 @@ public class UsuarioRestController extends GenericRestController {
     public ResponseEntity<GenericResponse> update(@RequestBody UsuarioWriteDTO usuarioWriteDTO) {
 
         try {
-            UsuarioDTO backup = usuarioService.findByIdOrThrow(usuarioWriteDTO.getUuid()).toDTO();
+            UsuarioDTO backup = usuarioService.findByIdOrThrow(usuarioWriteDTO.getUuid()).toDTO();          
             Usuario saved = usuarioService.update(usuarioWriteDTO);
 
             return getResponseOK("Usuário atualizado com sucesso", saved.toDTO(), Map.of("backup", backup));
