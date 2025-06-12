@@ -30,15 +30,13 @@ public class ProjetoDTO extends IntDomainDTO implements DTO<Projeto> {
     private String responsavel;
 
     @Schema(description = "Imagem do projeto em base64 ou URL", example = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUg...")
-    private String imagemBase64;
+    private String imagemUrl;
 
     public ProjetoDTO(Projeto projeto) {
         this.initBy(projeto);
 
         if (projeto.getImagem() != null && projeto.getImagem().length > 0) {
-            String base64 = java.util.Base64.getEncoder().encodeToString(projeto.getImagem());
-            // Você pode ajustar o tipo da imagem, ex: "jpeg", "png", etc.
-            this.imagemBase64 = "data:image/jpeg;base64," + base64;
+            this.imagemUrl = "/api/projeto/" + projeto.getId() + "/imagem";
         }
     }
 

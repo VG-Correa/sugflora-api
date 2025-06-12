@@ -96,6 +96,23 @@ public class ProjetoRestController extends GenericRestController {
         }
     }
 
+    @GetMapping(value = "/{id}/imagem", produces = MediaType.IMAGE_JPEG_VALUE)
+    public ResponseEntity<byte[]> getImagem(@PathVariable Integer id) {
+        try {
+            Projeto projeto = projetoService.findByIdOrThrow(id);
+            byte[] imagem = projeto.getImagem();
+
+            if (imagem == null || imagem.length == 0) {
+                return ResponseEntity.notFound().build();
+            }
+
+            return ResponseEntity.ok().contentType(MediaType.IMAGE_JPEG).body(imagem);
+
+        } catch (Exception e) {
+            return ResponseEntity.internalServerError().build();
+        }
+    }
+
     @GetMapping("")
     public ResponseEntity<GenericResponse> getAll() {
         try {
