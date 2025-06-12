@@ -3,6 +3,7 @@ package com.spec.api_sugflora.dto;
 import java.time.LocalDateTime;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.spec.api_sugflora.model.Projeto;
 import com.spec.speedspring.core.dto.DTO;
 

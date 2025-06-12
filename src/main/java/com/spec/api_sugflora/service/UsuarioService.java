@@ -131,16 +131,51 @@ public class UsuarioService {
 
     @Transactional
     public Usuario update(UsuarioWriteDTO usuarioWriteDTO) {
-        
+        // Verifica se o usuário existe
         Usuario usuario = findByIdOrThrow(usuarioWriteDTO.getUuid());
-        usuarioWriteDTO.setSenha(usuario.getSenha());
         
-        usuario.initBy(usuarioWriteDTO);
+        // Verifica se o email já existe para outro usuário
+        if (!usuario.getEmail().equals(usuarioWriteDTO.getEmail())) {
+            if (userExistsByEmail(usuarioWriteDTO.getEmail())) {
+                throw new EntityAlreadExistsException("Este e-mail já está cadastrado");
+            }
+        }
 
+        // Verifica se o username já existe para outro usuário
+        if (!usuario.getUsername().equals(usuarioWriteDTO.getUsername())) {
+            if (userExistsByUsername(usuarioWriteDTO.getUsername())) {
+                throw new EntityAlreadExistsException("Já existe um usuário com este username");
+            }
+        }
+
+        // Verifica se o CPF já existe para outro usuário
+        if (!usuario.getCpf().equals(usuarioWriteDTO.getCpf())) {
+            if (userExistsByCPF(usuarioWriteDTO.getCpf())) {
+                throw new EntityAlreadExistsException("Já existe um usuário com este CPF");
+            }
+        }
+
+        // Verifica se o RG já existe para outro usuário
+        if (!usuario.getRg().equals(usuarioWriteDTO.getRg())) {
+            if (userExistsByRg(usuarioWriteDTO.getRg())) {
+                throw new EntityAlreadExistsException("Já existe um usuário com este RG");
+            }
+        }
+
+        // Mantém a senha atual se não for alterada
+        if (usuarioWriteDTO.getSenha() == null || usuarioWriteDTO.getSenha().isEmpty()) {
+            usuarioWriteDTO.setSenha(usuario.getSenha());
+        }
+        
+        // Atualiza os dados do usuário
+        usuario.initBy(usuarioWriteDTO);
         usuario.updateDateNow();
 
+        // Valida os dados atualizados
         isValid(usuario);
-        return usuario;
+
+        // Salva as alterações
+        return usuarioRepository.save(usuario);
     }
 
     @Transactional
