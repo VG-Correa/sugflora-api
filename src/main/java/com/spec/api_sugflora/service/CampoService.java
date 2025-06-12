@@ -91,6 +91,8 @@ public class CampoService {
 
         } else if (campoWriteDTO.getCep() == null) {
             throw new EntityInvalidException("O Cep não pode ser nulo");
+        } else if (campoWriteDTO.getData_inicio() == null) {
+            throw new EntityInvalidException("A data de início não pode ser nula");
         }
 
     }
