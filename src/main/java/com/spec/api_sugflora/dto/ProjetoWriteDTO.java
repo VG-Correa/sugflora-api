@@ -19,5 +19,6 @@ public class ProjetoWriteDTO {
     private boolean isPublic;
     private LocalDateTime inicio;
     private LocalDateTime termino;
-
+    private String responsavel;
+    private String imagemBase64;
 }
