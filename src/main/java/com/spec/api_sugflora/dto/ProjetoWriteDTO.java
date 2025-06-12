@@ -19,4 +19,9 @@ public class ProjetoWriteDTO {
     private LocalDate previsaoConclusao;
     
     private UUID usuario_dono_uuid;
+    private boolean isPublic;
+    private LocalDateTime inicio;
+    private LocalDateTime termino;
+    private String responsavel;
+    private String imagemBase64;
 }

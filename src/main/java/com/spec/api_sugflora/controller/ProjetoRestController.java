@@ -31,9 +31,15 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.persistence.EntityExistsException;
 import jakarta.persistence.EntityNotFoundException;
 
+import java.nio.file.Files;
+import java.nio.file.StandardOpenOption;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
+import java.util.Base64;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.nio.file.StandardOpenOption;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
@@ -61,16 +67,22 @@ public class ProjetoRestController extends GenericRestController {
 
     @PostMapping("")
     public ResponseEntity<GenericResponse> novo(@RequestBody ProjetoWriteDTO projetoWriteDTO) {
-
         try {
-
-            System.err.println(projetoWriteDTO);
             Projeto projeto = new Projeto(projetoWriteDTO);
             Usuario usuarioDono = usuarioService.findByIdOrThrow(projetoWriteDTO.getUsuario_dono_uuid());
-
             projeto.setDono(usuarioDono);
 
-            System.out.println(projeto);
+            // Processar imagem base64 diretamente para byte[]
+            if (projetoWriteDTO.getImagemBase64() != null && !projetoWriteDTO.getImagemBase64().isEmpty()) {
+                String base64Data = projetoWriteDTO.getImagemBase64();
+                if (base64Data.contains(",")) {
+                    base64Data = base64Data.split(",")[1]; // remove o prefixo "data:image/jpeg;base64,"
+                }
+
+                byte[] imageBytes = Base64.getDecoder().decode(base64Data);
+                projeto.setImagem(imageBytes);
+            }
+
             Projeto saved = projetoService.save(projeto);
 
             if (saved != null) {
@@ -82,7 +94,23 @@ public class ProjetoRestController extends GenericRestController {
         } catch (Exception e) {
             return getResponseException(e);
         }
+    }
 
+    @GetMapping(value = "/{id}/imagem", produces = MediaType.IMAGE_JPEG_VALUE)
+    public ResponseEntity<byte[]> getImagem(@PathVariable Integer id) {
+        try {
+            Projeto projeto = projetoService.findByIdOrThrow(id);
+            byte[] imagem = projeto.getImagem();
+
+            if (imagem == null || imagem.length == 0) {
+                return ResponseEntity.notFound().build();
+            }
+
+            return ResponseEntity.ok().contentType(MediaType.IMAGE_JPEG).body(imagem);
+
+        } catch (Exception e) {
+            return ResponseEntity.internalServerError().build();
+        }
     }
 
     @GetMapping("")

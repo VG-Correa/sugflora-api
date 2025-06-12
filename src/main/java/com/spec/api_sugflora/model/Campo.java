@@ -12,7 +12,8 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
-import java.time.LocalDate;
+
+import java.time.LocalDateTime;
 
 @Entity
 @Data
@@ -46,8 +47,11 @@ public class Campo extends IntDomain implements DTOConvertable<CampoWriteDTO, Ca
     @Column(nullable = false, unique = false)
     private String cep;
 
-    @Column(nullable = false, unique = false)
-    private LocalDate data_inicio;
+    @Column(name = "data_inicio", nullable = false) 
+    private LocalDateTime data_inicio;
+
+    @Column(name = "data_termino", nullable = true) 
+    private LocalDateTime data_termino;
 
     public Campo(CampoWriteDTO campoWriteDTO) {
         initBy(campoWriteDTO);
@@ -62,5 +66,4 @@ public class Campo extends IntDomain implements DTOConvertable<CampoWriteDTO, Ca
     public boolean getLog() {
         return false;
     }
-
 }

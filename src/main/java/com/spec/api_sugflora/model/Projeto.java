@@ -1,6 +1,7 @@
 package com.spec.api_sugflora.model;
 
-import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.util.Base64;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.spec.api_sugflora.dto.ProjetoDTO;
@@ -23,30 +24,53 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class Projeto extends IntDomain implements DTOConvertable<ProjetoWriteDTO, ProjetoDTO> {
 
-    @Column(nullable = false, unique = false)
+    @Column(nullable = false)
     private String nome;
 
-    @Column(nullable = true, unique = false)
+    @Column(nullable = true)
     private String descricao;
 
     @ManyToOne
-    @JoinColumn(name = "usuario_dono_id", nullable = false, unique = false)
+    @JoinColumn(name = "usuario_dono_id", nullable = false)
     private Usuario dono;
 
-    @Column(nullable = false, unique = false)
+    @Column(nullable = false)
     private boolean isPublic = false;
 
-    @Column(nullable = true, unique = false)
+    @Column(nullable = true)
     private byte[] imagem;
 
-    @Column(nullable = false, unique = false)
-    private LocalDate inicio;
-    
-    @Column(nullable = true, unique = false)
-    private LocalDate previsaoConclusao;
+    @Column(nullable = false)
+    private LocalDateTime inicio;
 
+    @Column(nullable = true)
+    private LocalDateTime termino;
+
+    @Column(nullable = true)
+    private String responsavel;
+
+    // Construtor que inicializa a partir do DTO
     public Projeto(ProjetoWriteDTO dto) {
         this.initBy(dto);
+        setImagemBase64(dto.getImagemBase64());
+    }
+
+    // Método para atualizar os campos com dados do DTO
+    public void initBy(ProjetoWriteDTO dto) {
+        this.nome = dto.getNome();
+        this.descricao = dto.getDescricao();
+        this.isPublic = dto.isPublic();
+        this.inicio = dto.getInicio();
+        this.termino = dto.getTermino();
+        this.responsavel = dto.getResponsavel();
+        // Nota: dono deve ser setado separadamente (pois é entidade)
+    }
+
+    // Atualiza imagem convertendo Base64 para byte[]
+    public void setImagemBase64(String imagemBase64) {
+        if (imagemBase64 != null && !imagemBase64.isEmpty()) {
+            this.imagem = Base64.getDecoder().decode(imagemBase64);
+        }
     }
 
     @Override
@@ -59,5 +83,4 @@ public class Projeto extends IntDomain implements DTOConvertable<ProjetoWriteDTO
     public boolean getLog() {
         return false;
     }
-
 }

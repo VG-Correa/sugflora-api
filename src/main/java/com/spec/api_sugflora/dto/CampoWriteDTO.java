@@ -1,8 +1,8 @@
 package com.spec.api_sugflora.dto;
 
+import java.time.LocalDateTime;
 import java.util.UUID;
-import java.time.LocalDate;
-import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonFormat; 
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -22,7 +22,10 @@ public class CampoWriteDTO {
     private String estado;
     private String pais;
     private String cep;
-    
-    @JsonFormat(pattern = "yyyy-MM-dd")
-    private LocalDate data_inicio;
+
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss")
+    private LocalDateTime data_inicio;
+
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss")
+    private LocalDateTime data_termino;
 }
